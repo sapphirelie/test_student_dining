@@ -103,7 +103,7 @@
             border-radius: 8px;
             margin-bottom: 8px;
             display: flex;
-            flex-direction: column; /* Changed to column to stack text and buttons */
+            flex-direction: column;
             cursor: pointer;
             transition: transform 0.2s, background-color 0.2s;
         }
@@ -122,7 +122,7 @@
         .action-buttons {
             display: flex;
             gap: 5px;
-            justify-content: flex-end; /* Align buttons to the right */
+            justify-content: flex-end;
         }
         .action-buttons button {
             background-color: #d9534f;
@@ -365,20 +365,77 @@
         .coords-input-group .map-link-btn:hover {
             background-color: #0056b3;
         }
+
+        /* 後台管理區塊樣式 */
+        #adminSection {
+            display: none;
+            margin-top: 25px;
+            background: rgba(230, 240, 255, 0.9);
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+        #toggleAdminBtn {
+            margin-bottom: 20px;
+            width: 100%;
+        }
+        #mergeDataSection {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 1px dashed #ccc;
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <h1>陽明交大美食推薦</h1>
         
-        <div class="section data-io">
-            <h2>資料儲存與分享</h2>
-            <p>餐廳資料已自動儲存至瀏覽器，重開網頁也不會遺失。</p>
-            <p>您可以匯出/匯入資料以進行備份或與他人分享。</p>
-            <textarea id="jsonData" placeholder="在此貼上您要匯入的JSON資料..."></textarea>
-            <div class="btn-group">
-                <button id="exportButton">匯出資料</button>
-                <button id="importButton">匯入資料</button>
+        <button id="toggleAdminBtn" class="clear-btn">顯示/隱藏後台管理</button>
+
+        <div id="adminSection">
+            <h2>後台管理</h2>
+            
+            <div class="section data-io">
+                <h3>資料儲存與分享</h3>
+                <p>餐廳資料已自動儲存至瀏覽器，重開網頁也不會遺失。</p>
+                <p>您可以匯出/匯入資料以進行備份或與他人分享。</p>
+                <textarea id="jsonData" placeholder="在此貼上您要匯入的JSON資料..."></textarea>
+                <div class="btn-group">
+                    <button id="exportButton">匯出資料</button>
+                    <button id="importButton">匯入資料</button>
+                </div>
+            </div>
+
+            <div class="section custom-location-filter">
+                <h3>自訂距離參考點</h3>
+                <p>將「自訂經緯度」設定為參考點，並將此位置儲存至瀏覽器。</p>
+                <div class="input-group">
+                    <label for="customName">自訂名稱:</label>
+                    <input type="text" id="customName" placeholder="例: 活動中心">
+                    <button type="button" id="googleMapSearchBtn" class="map-link-btn" style="width: auto;">搜尋 Google Map</button>
+                </div>
+                <div class="input-group">
+                    <label for="customCoords">經緯度 (格式: 緯度,經度):</label>
+                    <input type="text" id="customCoords" placeholder="例: 25.12297, 121.51200">
+                </div>
+                <button id="setCustomLocation">設定為參考點並儲存</button>
+            </div>
+
+            <div id="mergeDataSection" class="section">
+                <h3>餐廳資料合併工具</h3>
+                <div class="input-group">
+                    <label for="json1">JSON 資料 1:</label>
+                    <textarea id="json1" placeholder="在此貼上第一份 JSON 資料..."></textarea>
+                </div>
+
+                <div class="input-group">
+                    <label for="json2">JSON 資料 2:</label>
+                    <textarea id="json2" placeholder="在此貼上第二份 JSON 資料..."></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button id="mergeButton">合併資料並匯入</button>
+                </div>
             </div>
         </div>
 
@@ -389,7 +446,7 @@
                 <label for="bgmSelect">選擇背景音樂:</label>
                 <select id="bgmSelect">
                     <option value="CryForMe.mp3">Cry For Me</option>
-                    <option value="FlowerDancecopy.mp3">Flower Dance</option>
+                    <option value="FlowerDancecopy.mpm">Flower Dance</option>
                     <option value="memories.mp3">Memories</option>
                     <option value="BeethovenVirus.mp3">Beethoven Virus</option>
                 </select>
@@ -421,17 +478,6 @@
                     <div class="checkbox-group">
                         <label><input type="radio" name="locationSource" value="dorm" checked> 陽明校區男三舍</label>
                         <label><input type="radio" name="locationSource" value="custom"> 自訂經緯度</label>
-                    </div>
-                    <div id="customLocationInputs" style="display:none;">
-                        <div class="input-group">
-                            <label for="customLat">緯度:</label>
-                            <input type="text" id="customLat" placeholder="例如: 25.12297">
-                        </div>
-                        <div class="input-group">
-                            <label for="customLng">經度:</label>
-                            <input type="text" id="customLng" placeholder="例如: 121.51200">
-                        </div>
-                        <button id="setCustomLocation">設定為參考點</button>
                     </div>
                 </div>
 
@@ -497,12 +543,11 @@
                     <input type="text" id="coords" placeholder="例: 25.11666, 121.51733" required>
                     <button type="button" id="googleMapBtn" class="map-link-btn">連到Google Map</button>
                 </div>
-
                 <button id="submitBtn" type="submit">新增</button>
             </form>
         </div>
     </div>
-
+    
     <div id="restaurantModal" class="modal">
         <div class="modal-content">
             <span class="close-button">×</span>
@@ -535,21 +580,30 @@
             const closeModalBtn = document.querySelector('.close-button');
             const modalContentDetails = document.getElementById('modalContentDetails');
             const coordsInput = document.getElementById('coords');
-            const customLatInput = document.getElementById('customLat');
-            const customLngInput = document.getElementById('customLng');
+            const customCoordsInput = document.getElementById('customCoords');
+            const customNameInput = document.getElementById('customName');
             const setCustomLocationButton = document.getElementById('setCustomLocation');
             const locationSourceRadios = document.querySelectorAll('input[name="locationSource"]');
-            const customLocationInputsDiv = document.getElementById('customLocationInputs');
             const locationTitle = document.getElementById('locationTitle');
             const clearAllButton = document.getElementById('clearAllButton');
             const customDistanceRadio = document.getElementById('customDistanceRadio');
             const googleMapBtn = document.getElementById('googleMapBtn');
+            const googleMapSearchBtn = document.getElementById('googleMapSearchBtn');
+            const toggleAdminBtn = document.getElementById('toggleAdminBtn');
+            const adminSection = document.getElementById('adminSection');
 
+            const json1Input = document.getElementById('json1');
+            const json2Input = document.getElementById('json2');
+            const mergeButton = document.getElementById('mergeButton');
 
-            // 陽明校區男三舍的經緯度 (固定參考點)
             const DORM_LOCATION = { lat: 25.122973560805033, lng: 121.51200418632095 };
             let myLocation = DORM_LOCATION;
             let myLocationName = '陽明校區男三舍';
+            let customLocationData = JSON.parse(localStorage.getItem('customLocation')) || null;
+            if (customLocationData) {
+                myLocation = { lat: customLocationData.lat, lng: customLocationData.lng };
+                myLocationName = customLocationData.name;
+            }
 
             let customDistanceValue = null;
             let editingIndex = null;
@@ -756,508 +810,534 @@
                     "lat": 25.116690159194476,
                     "lng": 121.51812433558221,
                     "isFavorite": false
+                },
+                {
+                    "name": "壽司郎（石牌店）",
+                    "type": "壽司",
+                    "rating": 3.6,
+                    "hours": "11:00–22:00",
+                    "tags": [
+                        "午餐",
+                        "晚餐",
+                        "主食"
+                    ],
+                    "location": "陽明校區",
+                    "lat": 25.118324,
+                    "lng": 121.518128,
+                    "isFavorite": false
+                },
+                {
+                    "name": "大三元便當快餐",
+                    "type": "便當",
+                    "rating": 3.9,
+                    "hours": "10:30–14:30 16:30–20:30（星期一休）",
+                    "tags": [
+                        "主食"
+                    ],
+                    "location": "陽明校區",
+                    "lat": 25.116819,
+                    "lng": 121.516877,
+                    "isFavorite": false
+                },
+                {
+                    "name": "2派克脆皮雞排 石牌店",
+                    "type": "炸物",
+                    "rating": 3.4,
+                    "hours": "11:30–23:30",
+                    "tags": [
+                        "小吃"
+                    ],
+                    "location": "陽明校區",
+                    "lat": 25.116749,
+                    "lng": 121.517211,
+                    "isFavorite": false
+                },
+                {
+                    "name": "大嘴巴牛排",
+                    "type": "牛排",
+                    "rating": 4.1,
+                    "hours": "平日：11:30–14:00 16:30–23:00 假日：11:30–23:00",
+                    "tags": [
+                        "午餐",
+                        "晚餐",
+                        "主食"
+                    ],
+                    "location": "陽明校區",
+                    "lat": 25.116572,
+                    "lng": 121.516628,
+                    "isFavorite": false
+                },
+                {
+                    "name": "德州美墨炸雞 天母店",
+                    "type": "炸雞",
+                    "rating": 4.3,
+                    "hours": "11:00–21:30（星期一休）",
+                    "tags": [
+                        "午餐",
+                        "晚餐",
+                        "主食"
+                    ],
+                    "location": "陽明校區",
+                    "lat": 25.115703,
+                    "lng": 121.52828,
+                    "isFavorite": false
                 }
             ];
 
-            // 確保匯入的舊資料有 isFavorite 屬性
             if (restaurants) {
                 restaurants.forEach(r => {
-                    if (r.isFavorite === undefined) {
+                    if (r.isFavorite === undefined || typeof r.isFavorite !== 'boolean') {
                         r.isFavorite = false;
                     }
                 });
             }
 
-            // 將餐廳資料保存到 localStorage
-            const saveRestaurants = () => {
-                localStorage.setItem('restaurants', JSON.stringify(restaurants));
-            };
+            function haversineDistance(lat1, lon1, lat2, lon2) {
+                const toRad = (x) => x * Math.PI / 180;
+                const R = 6371e3;
+                const φ1 = toRad(lat1);
+                const φ2 = toRad(lat2);
+                const Δφ = toRad(lat2 - lat1);
+                const Δλ = toRad(lon2 - lon1);
+                const a = Math.sin(Δφ / 2) * Math.sin(Δφ / 2) +
+                        Math.cos(φ1) * Math.cos(φ2) *
+                        Math.sin(Δλ / 2) * Math.sin(Δλ / 2);
+                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+                return R * c;
+            }
 
-            // 檢查餐廳是否現在營業中
-            const isRestaurantOpen = (hoursString) => {
+            function isRestaurantOpen(hours) {
                 const now = new Date();
-                const currentDay = now.getDay(); 
+                const day = now.getDay();
                 const currentHour = now.getHours();
                 const currentMinute = now.getMinutes();
-                const currentTimeInMinutes = currentHour * 60 + currentMinute;
-                
-                const weekdays = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-                const currentWeekdayText = weekdays[currentDay];
 
-                if (hoursString.includes('公休')) {
-                    if (hoursString.includes(currentWeekdayText)) {
-                        return false; 
-                    }
-                }
-                
-                if (hoursString.includes('請參考地圖資訊') || hoursString.includes('致電確認')) {
-                    return true; 
-                }
-
-                if (hoursString.includes('24 小時營業')) {
-                    return true;
-                }
-
-                const timeRanges = hoursString.match(/(\d{2}:\d{2})–(\d{2}:\d{2})/g);
-                if (!timeRanges) return false;
-
-                for (const range of timeRanges) {
-                    const [openTime, closeTime] = range.split('–');
-                    const [openHour, openMinute] = openTime.split(':').map(Number);
-                    const [closeHour, closeMinute] = closeTime.split(':').map(Number);
-
-                    let openTimeInMinutes = openHour * 60 + openMinute;
-                    let closeTimeInMinutes = closeHour * 60 + closeMinute;
-
-                    if (closeTimeInMinutes < openTimeInMinutes) {
-                        if (currentTimeInMinutes >= openTimeInMinutes || currentTimeInMinutes <= closeTimeInMinutes) {
-                            return true;
-                        }
-                    } else {
-                        if (currentTimeInMinutes >= openTimeInMinutes && currentTimeInMinutes <= closeTimeInMinutes) {
-                            return true;
+                if (hours.includes('公休')) {
+                    const daysOff = hours.match(/星期(.)公休/);
+                    if (daysOff) {
+                        const dayOffMap = { '日': 0, '一': 1, '二': 2, '三': 3, '四': 4, '五': 5, '六': 6 };
+                        if (dayOffMap[daysOff[1]] === day) {
+                            return false;
                         }
                     }
                 }
-                
-                return false;
-            };
 
-            // 海倫公式計算兩點經緯度距離 (單位: 米)
-            const haversineDistance = (coords1, coords2) => {
-                const toRad = (value) => (value * Math.PI) / 180;
-                const R = 6371e3; // 地球半徑 (米)
-                const dLat = toRad(coords2.lat - coords1.lat);
-                const dLon = toRad(coords2.lng - coords1.lng);
-                const lat1 = toRad(coords1.lat);
-                const lat2 = toRad(coords2.lat);
+                const intervals = hours.match(/(\d{2}:\d{2})–(\d{2}:\d{2})/g);
+                if (!intervals) return false;
 
-                const a = Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-                          Math.sin(dLon / 2) * Math.sin(dLon / 2) * Math.cos(lat1) * Math.cos(lat2); 
-                const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a)); 
-                return R * c;
-            };
-            
-            // 顯示餐廳詳細資訊的通用函式
-            const showRestaurantDetails = (restaurant) => {
-                const distance = haversineDistance(myLocation, { lat: restaurant.lat, lng: restaurant.lng });
-                const mapsQuery = encodeURIComponent(`${restaurant.name} ${restaurant.type}`);
-                const mapsLink = `https://www.google.com/maps/search/?api=1&query=${mapsQuery}`;
-
-                modalContentDetails.innerHTML = `
-                    <div style="margin-top: 10px; font-size: 1.2em; font-weight: normal; color: #555;">
-                        餐廳名稱：${restaurant.name}<br>
-                        飲食種類：${restaurant.type}<br>
-                        地點：${restaurant.location}<br>
-                        距離${myLocationName}：${distance.toFixed(0)} 公尺<br>
-                        評分：${restaurant.rating}<br>
-                        營業時間：${restaurant.hours}
-                    </div>
-                    <a href="${mapsLink}" target="_blank" class="nav-link">Google地圖導航</a>
-                `;
-                restaurantModal.style.display = 'flex';
-            };
-
-
-            // 渲染餐廳列表
-            const renderRestaurants = () => {
-                restaurantList.innerHTML = '';
-                const isTimeFiltered = openNowFilter.checked;
-                const isFavoritesFiltered = favoritesFilter.checked;
-                const selectedTags = [...tagFilters].filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
-                const selectedDistance = document.querySelector('input[name="distanceFilter"]:checked');
-                
-                let filteredRestaurants = restaurants;
-                let maxDistance = null;
-
-                if (selectedDistance) {
-                    const value = selectedDistance.value;
-                    if (value === 'custom') {
-                        if (customDistanceValue !== null) {
-                            maxDistance = customDistanceValue;
-                        }
-                    } else {
-                        maxDistance = parseInt(value);
-                    }
-                }
-
-
-                if (maxDistance !== null) {
-                    filteredRestaurants = filteredRestaurants.filter(r => {
-                        if (!r.lat || !r.lng) return false;
-                        const distance = haversineDistance(myLocation, { lat: r.lat, lng: r.lng });
-                        return distance <= maxDistance;
+                for (const interval of intervals) {
+                    const [start, end] = interval.split('–').map(t => {
+                        const [h, m] = t.split(':').map(Number);
+                        return h * 60 + m;
                     });
+                    const currentTimeInMinutes = currentHour * 60 + currentMinute;
+                    if (currentTimeInMinutes >= start && currentTimeInMinutes <= end) {
+                        return true;
+                    }
                 }
+                return false;
+            }
 
-                if (isTimeFiltered) {
+            function renderRestaurants(filterCriteria = {}) {
+                restaurantList.innerHTML = '';
+                const {
+                    openNow = false,
+                    favoritesOnly = false,
+                    tags = [],
+                    distance = null,
+                    sortBy = 'rating-desc'
+                } = filterCriteria;
+
+                let filteredRestaurants = restaurants;
+
+                if (openNow) {
                     filteredRestaurants = filteredRestaurants.filter(r => isRestaurantOpen(r.hours));
                 }
 
-                if (isFavoritesFiltered) {
+                if (favoritesOnly) {
                     filteredRestaurants = filteredRestaurants.filter(r => r.isFavorite);
                 }
 
-                if (selectedTags.length > 0) {
-                    filteredRestaurants = filteredRestaurants.filter(r => selectedTags.some(tag => r.tags.includes(tag)));
+                if (tags.length > 0) {
+                    filteredRestaurants = filteredRestaurants.filter(r => tags.every(tag => r.tags.includes(tag)));
                 }
 
-                const sortedRestaurants = [...filteredRestaurants];
-
-                const criteria = sortCriteria.value;
-                if (criteria === 'rating-desc') {
-                    sortedRestaurants.sort((a, b) => b.rating - a.rating);
-                } else if (criteria === 'rating-asc') {
-                    sortedRestaurants.sort((a, b) => a.rating - b.rating);
-                } else if (criteria === 'distance-asc') {
-                    sortedRestaurants.sort((a, b) => {
-                        const distA = haversineDistance(myLocation, { lat: a.lat, lng: a.lng });
-                        const distB = haversineDistance(myLocation, { lat: b.lat, lng: b.lng });
-                        return distA - distB;
-                    });
-                } else if (criteria === 'name-asc') {
-                    sortedRestaurants.sort((a, b) => a.name.localeCompare(b.name));
-                } else if (criteria === 'name-desc') {
-                    sortedRestaurants.sort((a, b) => b.name.localeCompare(a.name));
-                }
-
-                if (sortedRestaurants.length === 0) {
-                    restaurantList.innerHTML = '<li style="justify-content: center; border: none; font-style: italic; color: #888;">沒有符合篩選條件的餐廳</li>';
-                } else {
-                    sortedRestaurants.forEach((restaurant, index) => {
-                        const distance = haversineDistance(myLocation, { lat: restaurant.lat, lng: restaurant.lng });
-                        const li = document.createElement('li');
-                        li.dataset.restaurantIndex = restaurants.indexOf(restaurant);
-                        if (restaurant.isFavorite) {
-                            li.classList.add('favorite');
-                        }
-                        li.innerHTML = `
-                            <div class="restaurant-info">
-                                <strong>${restaurant.name}</strong> - ${restaurant.type}<br>
-                                評分: ${restaurant.rating} | 營業時間: ${restaurant.hours}<br>
-                                距離${myLocationName}: ${distance.toFixed(0)} 公尺<br>
-                                標籤: ${restaurant.tags.join(', ')}
-                            </div>
-                            <div class="action-buttons">
-                                <button class="favorite-btn" data-index="${restaurants.indexOf(restaurant)}">${restaurant.isFavorite ? '已加最愛' : '加入最愛'}</button>
-                                <button class="edit-btn" data-index="${restaurants.indexOf(restaurant)}">更正</button>
-                                <button class="delete-btn" data-index="${restaurants.indexOf(restaurant)}">刪除</button>
-                            </div>
-                        `;
-                        restaurantList.appendChild(li);
+                if (distance !== null) {
+                    filteredRestaurants = filteredRestaurants.filter(r => {
+                        const dist = haversineDistance(myLocation.lat, myLocation.lng, r.lat, r.lng);
+                        return dist <= distance;
                     });
                 }
-            };
+                
+                filteredRestaurants.forEach(r => {
+                    r.distance = haversineDistance(myLocation.lat, myLocation.lng, r.lat, r.lng);
+                });
 
-            // 重置表單為新增模式
-            const resetFormForAdd = () => {
-                addForm.reset();
-                editingIndex = null;
-                addRestaurantTitle.textContent = '新增餐廳';
-                submitBtn.textContent = '新增';
-            };
-
-            // 新增或更新餐廳
-            addForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                const tagsInput = document.getElementById('tags').value;
-                const coordsString = coordsInput.value;
-                const [lat, lng] = coordsString.split(',').map(coord => parseFloat(coord.trim()));
-
-                if (isNaN(lat) || isNaN(lng)) {
-                    alert('經緯度格式不正確，請輸入「緯度,經度」。');
+                filteredRestaurants.sort((a, b) => {
+                    switch (sortBy) {
+                        case 'rating-desc':
+                            return b.rating - a.rating;
+                        case 'rating-asc':
+                            return a.rating - b.rating;
+                        case 'distance-asc':
+                            return a.distance - b.distance;
+                        case 'name-asc':
+                            return a.name.localeCompare(b.name);
+                        case 'name-desc':
+                            return b.name.localeCompare(a.name);
+                        default:
+                            return 0;
+                    }
+                });
+                
+                if (filteredRestaurants.length === 0) {
+                    restaurantList.innerHTML = '<li>目前沒有符合條件的餐廳。</li>';
                     return;
                 }
 
-                const newRestaurant = {
-                    name: document.getElementById('name').value,
-                    type: document.getElementById('type').value,
-                    rating: parseFloat(document.getElementById('rating').value),
-                    hours: document.getElementById('hours').value,
-                    tags: tagsInput.split(',').map(tag => tag.trim()),
-                    location: '陽明校區',
-                    lat: lat,
-                    lng: lng,
-                    isFavorite: false
-                };
-
-                if (editingIndex !== null) {
-                    // Retain favorite status on update
-                    newRestaurant.isFavorite = restaurants[editingIndex].isFavorite;
-                    restaurants[editingIndex] = newRestaurant;
-                    alert('餐廳資料更新成功！');
-                } else {
-                    restaurants.push(newRestaurant);
-                    alert('餐廳新增成功！');
-                }
-                
-                saveRestaurants();
-                renderRestaurants();
-                resetFormForAdd();
-            });
-
-            // 刪除或更正餐廳
-            restaurantList.addEventListener('click', (e) => {
-                if (e.target.classList.contains('delete-btn')) {
-                    e.stopPropagation();
-                    const index = e.target.dataset.index;
-                    restaurants.splice(index, 1);
-                    saveRestaurants();
-                    renderRestaurants();
-                } else if (e.target.classList.contains('edit-btn')) {
-                    e.stopPropagation();
-                    const index = e.target.dataset.index;
-                    editingIndex = parseInt(index);
-                    const restaurantToEdit = restaurants[editingIndex];
-
-                    document.getElementById('name').value = restaurantToEdit.name;
-                    document.getElementById('type').value = restaurantToEdit.type;
-                    document.getElementById('rating').value = restaurantToEdit.rating;
-                    document.getElementById('hours').value = restaurantToEdit.hours;
-                    document.getElementById('tags').value = restaurantToEdit.tags.join(', ');
-                    coordsInput.value = `${restaurantToEdit.lat}, ${restaurantToEdit.lng}`;
-
-                    addRestaurantTitle.textContent = '更新餐廳資料';
-                    submitBtn.textContent = '更新餐廳';
-                    window.scrollTo({
-                        top: document.body.scrollHeight,
-                        behavior: 'smooth'
-                    });
-                } else if (e.target.classList.contains('favorite-btn')) {
-                    e.stopPropagation();
-                    const index = e.target.dataset.index;
-                    restaurants[index].isFavorite = !restaurants[index].isFavorite;
-                    saveRestaurants();
-                    renderRestaurants();
-                } else if (e.target.closest('li')) {
-                    const listItem = e.target.closest('li');
-                    const index = listItem.dataset.restaurantIndex;
-                    showRestaurantDetails(restaurants[index]);
-                }
-            });
-
-            // 隨機抽取
-            randomButton.addEventListener('click', () => {
-                const isTimeFiltered = openNowFilter.checked;
-                const isFavoritesFiltered = favoritesFilter.checked;
-                const selectedTags = [...tagFilters].filter(checkbox => checkbox.checked).map(checkbox => checkbox.value);
-                const selectedDistance = document.querySelector('input[name="distanceFilter"]:checked');
-                
-                let availableRestaurants = restaurants;
-                let maxDistance = null;
-                
-                if (selectedDistance) {
-                    const value = selectedDistance.value;
-                    if (value === 'custom') {
-                        if (customDistanceValue !== null) {
-                            maxDistance = customDistanceValue;
-                        }
-                    } else {
-                        maxDistance = parseInt(value);
-                    }
-                }
-
-                if (maxDistance !== null) {
-                    availableRestaurants = availableRestaurants.filter(r => {
-                        if (!r.lat || !r.lng) return false;
-                        const distance = haversineDistance(myLocation, { lat: r.lat, lng: r.lng });
-                        return distance <= maxDistance;
-                    });
-                }
-                
-                if (isTimeFiltered) {
-                    availableRestaurants = availableRestaurants.filter(r => isRestaurantOpen(r.hours));
-                }
-
-                if (isFavoritesFiltered) {
-                    availableRestaurants = availableRestaurants.filter(r => r.isFavorite);
-                }
-
-                if (selectedTags.length > 0) {
-                    availableRestaurants = availableRestaurants.filter(r => selectedTags.some(tag => r.tags.includes(tag)));
-                }
-
-                if (availableRestaurants.length > 0) {
-                    const randomIndex = Math.floor(Math.random() * availableRestaurants.length);
-                    const randomRestaurant = availableRestaurants[randomIndex];
+                filteredRestaurants.forEach((r, index) => {
+                    const li = document.createElement('li');
                     
-                    randomResult.innerHTML = `
-                        恭喜您抽到：
-                        <div style="margin-top: 10px; font-size: 1.2em; font-weight: normal; color: #555;">
-                            餐廳名稱：${randomRestaurant.name}<br>
-                            飲食種類：${randomRestaurant.type}<br>
-                            地點：${randomRestaurant.location}<br>
-                            距離${myLocationName}：${haversineDistance(myLocation, { lat: randomRestaurant.lat, lng: randomRestaurant.lng }).toFixed(0)} 公尺<br>
-                            評分：${randomRestaurant.rating}<br>
-                            營業時間：${randomRestaurant.hours}
+                    // 修正此處，避免新增空 class 名稱
+                    if (r.isFavorite) {
+                        li.classList.add('favorite');
+                    }
+                    
+                    li.innerHTML = `
+                        <div class="restaurant-info">
+                            <strong>${r.name}</strong> - ${r.type}<br>
+                            評分: ${r.rating} | 營業時間: ${r.hours}<br>
+                            距離${myLocationName}: ${r.distance.toFixed(0)} 公尺<br>
+                            標籤: ${r.tags.join(', ')}
                         </div>
-                        <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(`${randomRestaurant.name} ${randomRestaurant.type}`)}" target="_blank" class="nav-link">Google地圖導航</a>
+                        <div class="action-buttons">
+                            <button class="favorite-btn ${r.isFavorite ? 'active' : ''}" data-index="${index}">
+                                ${r.isFavorite ? '從最愛移除' : '加入最愛'}
+                            </button>
+                            <button class="edit-btn" data-index="${index}">更正</button>
+                            <button class="delete-btn" data-index="${index}">刪除</button>
+                        </div>
                     `;
-                } else {
-                    randomResult.innerHTML = '目前沒有符合篩選條件的餐廳可供抽取。';
-                }
-            });
-
-            // 監聽參考點選項的變更
-            locationSourceRadios.forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    if (e.target.value === 'dorm') {
-                        myLocation = DORM_LOCATION;
-                        myLocationName = '陽明校區男三舍';
-                        customLocationInputsDiv.style.display = 'none';
-                    } else {
-                        customLocationInputsDiv.style.display = 'block';
-                    }
-                    renderRestaurants();
+                    restaurantList.appendChild(li);
                 });
-            });
+            }
 
-            // 設定自訂參考點
-            setCustomLocationButton.addEventListener('click', () => {
-                const lat = parseFloat(customLatInput.value);
-                const lng = parseFloat(customLngInput.value);
+            function saveRestaurants() {
+                localStorage.setItem('restaurants', JSON.stringify(restaurants));
+            }
 
-                if (!isNaN(lat) && !isNaN(lng)) {
-                    myLocation = { lat, lng };
-                    myLocationName = `自訂參考點 (${lat.toFixed(4)}, ${lng.toFixed(4)})`;
-                    renderRestaurants();
-                    alert('已將參考點設定為您輸入的經緯度！');
-                } else {
-                    alert('經緯度格式不正確，請檢查。');
-                }
-            });
+            function applyFilters() {
+                const openNow = openNowFilter.checked;
+                const favoritesOnly = favoritesFilter.checked;
+                const selectedTags = Array.from(tagFilters)
+                    .filter(checkbox => checkbox.checked)
+                    .map(checkbox => checkbox.value);
+                const selectedDistance = Array.from(distanceFilters).find(radio => radio.checked)?.value;
+                const sortBy = sortCriteria.value;
 
-            // 篩選與排序變動時重新渲染列表
-            sortCriteria.addEventListener('change', renderRestaurants);
-            openNowFilter.addEventListener('change', renderRestaurants);
-            favoritesFilter.addEventListener('change', renderRestaurants);
-            tagFilters.forEach(checkbox => {
-                checkbox.addEventListener('change', renderRestaurants);
-            });
-            distanceFilters.forEach(radio => {
-                radio.addEventListener('change', () => {
-                    if (radio.value === 'custom') {
-                        // Do nothing, custom distance is handled by the button
-                    } else {
-                        customDistanceValue = null;
-                        customDistanceInput.value = '';
-                    }
-                    renderRestaurants();
+                renderRestaurants({
+                    openNow,
+                    favoritesOnly,
+                    tags: selectedTags,
+                    distance: selectedDistance === 'custom' ? customDistanceValue : selectedDistance,
+                    sortBy
                 });
-            });
-            applyCustomDistanceButton.addEventListener('click', () => {
-                const value = parseInt(customDistanceInput.value);
-                if (!isNaN(value) && value >= 0) {
-                    customDistanceValue = value;
-                    customDistanceRadio.checked = true;
-                } else {
-                    customDistanceValue = null;
-                    customDistanceRadio.checked = false;
-                }
-                renderRestaurants();
-            });
+            }
 
-            // 清除全部按鈕事件
-            clearAllButton.addEventListener('click', () => {
-                // 清除篩選條件
-                openNowFilter.checked = false;
-                favoritesFilter.checked = false;
-                tagFilters.forEach(checkbox => checkbox.checked = false);
-                distanceFilters.forEach(radio => radio.checked = false);
-                customDistanceInput.value = '';
-                customDistanceValue = null;
-
-                // 重設排序
-                sortCriteria.value = 'rating-desc';
-
-                // 清除隨機結果
-                randomResult.textContent = '';
-                
-                // 重新渲染列表
-                renderRestaurants();
-            });
-
-            // 新增Google Map按鈕的事件監聽器
-            googleMapBtn.addEventListener('click', (e) => {
+            addForm.addEventListener('submit', (e) => {
                 e.preventDefault();
-                const coordsString = coordsInput.value;
-                const [lat, lng] = coordsString.split(',').map(coord => coord.trim());
-
-                if (lat && lng) {
-                    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
-                    window.open(mapsUrl, '_blank');
+                const name = document.getElementById('name').value;
+                const type = document.getElementById('type').value;
+                const rating = parseFloat(document.getElementById('rating').value);
+                const hours = document.getElementById('hours').value;
+                const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+                const [lat, lng] = document.getElementById('coords').value.split(',').map(Number);
+                
+                if (editingIndex !== null) {
+                    restaurants[editingIndex] = { ...restaurants[editingIndex], name, type, rating, hours, tags, lat, lng };
+                    editingIndex = null;
+                    submitBtn.textContent = '新增';
+                    addRestaurantTitle.textContent = '新增餐廳';
                 } else {
-                    alert('請輸入有效的經緯度。');
+                    restaurants.push({ name, type, rating, hours, tags, lat, lng, isFavorite: false });
+                }
+
+                saveRestaurants();
+                addForm.reset();
+                applyFilters();
+            });
+
+            restaurantList.addEventListener('click', (e) => {
+                const target = e.target;
+                const index = target.closest('.action-buttons')?.querySelector('button')?.dataset.index;
+                if (!index) return;
+
+                const restaurantIndex = restaurants.findIndex(r => r.name === restaurants[index].name);
+
+                if (target.classList.contains('delete-btn')) {
+                    if (confirm(`確定要刪除 ${restaurants[restaurantIndex].name} 嗎？`)) {
+                        restaurants.splice(restaurantIndex, 1);
+                        saveRestaurants();
+                        applyFilters();
+                    }
+                } else if (target.classList.contains('edit-btn')) {
+                    const r = restaurants[restaurantIndex];
+                    document.getElementById('name').value = r.name;
+                    document.getElementById('type').value = r.type;
+                    document.getElementById('rating').value = r.rating;
+                    document.getElementById('hours').value = r.hours;
+                    document.getElementById('tags').value = r.tags.join(', ');
+                    document.getElementById('coords').value = `${r.lat}, ${r.lng}`;
+                    
+                    editingIndex = restaurantIndex;
+                    submitBtn.textContent = '更新';
+                    addRestaurantTitle.textContent = '更正餐廳資料';
+                    window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
+                } else if (target.classList.contains('favorite-btn')) {
+                    restaurants[restaurantIndex].isFavorite = !restaurants[restaurantIndex].isFavorite;
+                    saveRestaurants();
+                    applyFilters();
+                } else if (target.closest('li')) {
+                    const r = restaurants[restaurantIndex];
+                    showRestaurantModal(r);
                 }
             });
 
-            // Modal events
-            closeModalBtn.addEventListener('click', () => {
+            function showRestaurantModal(restaurant) {
+                const mapLink = `https://www.google.com/maps/search/?api=1&query=${restaurant.lat},${restaurant.lng}`;
+                modalContentDetails.innerHTML = `
+                    <h3>${restaurant.name}</h3>
+                    <p><strong>飲食種類:</strong> ${restaurant.type}</p>
+                    <p><strong>評分:</strong> ${restaurant.rating}</p>
+                    <p><strong>營業時間:</strong> ${restaurant.hours}</p>
+                    <p><strong>標籤:</strong> ${restaurant.tags.join(', ')}</p>
+                    <p><strong>距離${myLocationName}:</strong> ${restaurant.distance.toFixed(0)} 公尺</p>
+                    <a href="${mapLink}" target="_blank" class="nav-link">在地圖上查看</a>
+                `;
+                restaurantModal.style.display = 'flex';
+            }
+
+            closeModalBtn.onclick = () => {
                 restaurantModal.style.display = 'none';
-            });
-            window.addEventListener('click', (event) => {
-                if (event.target == restaurantModal) {
+            };
+
+            window.onclick = (event) => {
+                if (event.target === restaurantModal) {
                     restaurantModal.style.display = 'none';
                 }
+            };
+            
+            randomButton.addEventListener('click', () => {
+                const filteredRestaurants = Array.from(restaurantList.querySelectorAll('li'));
+                if (filteredRestaurants.length === 0) {
+                    randomResult.textContent = '目前沒有符合條件的餐廳。';
+                    return;
+                }
+                const randomIndex = Math.floor(Math.random() * filteredRestaurants.length);
+                const randomRestaurant = filteredRestaurants[randomIndex].querySelector('.restaurant-info strong').textContent;
+                randomResult.textContent = `今天吃：${randomRestaurant}`;
+            });
+            
+            sortCriteria.addEventListener('change', applyFilters);
+            openNowFilter.addEventListener('change', applyFilters);
+            favoritesFilter.addEventListener('change', applyFilters);
+            tagFilters.forEach(checkbox => checkbox.addEventListener('change', applyFilters));
+            distanceFilters.forEach(radio => radio.addEventListener('change', applyFilters));
+            
+            applyCustomDistanceButton.addEventListener('click', () => {
+                customDistanceValue = parseInt(customDistanceInput.value, 10);
+                if (isNaN(customDistanceValue) || customDistanceValue < 0) {
+                    alert('請輸入有效的距離數值！');
+                    return;
+                }
+                customDistanceRadio.checked = true;
+                applyFilters();
             });
 
-            // 資料匯出
-            exportButton.addEventListener('click', () => {
-                jsonDataArea.value = JSON.stringify(restaurants, null, 2);
-            });
-
-            // 資料匯入
-            importButton.addEventListener('click', () => {
-                try {
-                    const importedData = JSON.parse(jsonDataArea.value);
-                    if (Array.isArray(importedData)) {
-                        // Ensure imported data has isFavorite property
-                        importedData.forEach(r => {
-                            if (r.isFavorite === undefined) {
-                                r.isFavorite = false;
-                            }
-                        });
-                        restaurants = importedData;
-                        saveRestaurants();
-                        renderRestaurants();
-                        alert('資料匯入成功！');
-                    } else {
-                        alert('匯入的資料格式不正確，請檢查。');
-                    }
-                } catch (e) {
-                    alert('匯入的資料格式不正確，請檢查。');
+            bgmSelect.addEventListener('change', () => {
+                backgroundMusic.src = bgmSelect.value;
+                if (!backgroundMusic.paused) {
+                    backgroundMusic.play();
                 }
             });
 
-            // 音樂選擇器事件
-            bgmSelect.addEventListener('change', () => {
-                backgroundMusic.src = bgmSelect.value;
-                backgroundMusic.pause();
-                musicButton.textContent = '播放音樂';
-            });
-
-            // 播放/暫停音樂的事件監聽器
             musicButton.addEventListener('click', () => {
                 if (backgroundMusic.paused) {
-                    backgroundMusic.play().then(() => {
-                        musicButton.textContent = '暫停音樂';
-                    }).catch(error => {
-                        console.log("播放音樂失敗:", error);
-                    });
+                    backgroundMusic.play();
+                    musicButton.textContent = '暫停音樂';
                 } else {
                     backgroundMusic.pause();
                     musicButton.textContent = '播放音樂';
                 }
             });
 
-            // 初始化頁面
-            bgmSelect.value = 'CryForMe.mp3';
-            backgroundMusic.src = bgmSelect.value;
-            renderRestaurants();
+            exportButton.addEventListener('click', () => {
+                const exportData = {
+                    restaurants: restaurants,
+                    customLocation: customLocationData
+                };
+                jsonDataArea.value = JSON.stringify(exportData, null, 2);
+                alert('資料已匯出至下方的文字框中。');
+            });
+
+            importButton.addEventListener('click', () => {
+                try {
+                    const importData = JSON.parse(jsonDataArea.value);
+                    if (!importData || !Array.isArray(importData.restaurants)) {
+                        throw new Error('JSON資料格式不正確，缺少 "restaurants" 陣列。');
+                    }
+                    
+                    importData.restaurants.forEach(r => {
+                        if (r.isFavorite === undefined) {
+                            r.isFavorite = false;
+                        }
+                    });
+                    
+                    restaurants = importData.restaurants;
+                    customLocationData = importData.customLocation;
+                    if (customLocationData) {
+                        myLocation = { lat: customLocationData.lat, lng: customLocationData.lng };
+                        myLocationName = customLocationData.name;
+                        document.querySelector('input[name="locationSource"][value="custom"]').checked = true;
+                        document.getElementById('locationTitle').textContent = `距離參考點設定: (目前: ${myLocationName})`;
+                    } else {
+                        myLocation = DORM_LOCATION;
+                        myLocationName = '陽明校區男三舍';
+                        document.querySelector('input[name="locationSource"][value="dorm"]').checked = true;
+                        document.getElementById('locationTitle').textContent = `距離參考點設定: (目前: 陽明校區男三舍)`;
+                    }
+                    saveRestaurants();
+                    applyFilters();
+                    alert('資料匯入成功！');
+                } catch (e) {
+                    alert('匯入失敗：' + e.message);
+                }
+            });
+
+            setCustomLocationButton.addEventListener('click', () => {
+                const customName = customNameInput.value.trim();
+                const [lat, lng] = customCoordsInput.value.split(',').map(Number);
+
+                if (customName && !isNaN(lat) && !isNaN(lng)) {
+                    customLocationData = { name: customName, lat, lng };
+                    localStorage.setItem('customLocation', JSON.stringify(customLocationData));
+                    myLocation = { lat, lng };
+                    myLocationName = customName;
+                    document.getElementById('locationTitle').textContent = `距離參考點設定: (目前: ${myLocationName})`;
+                    document.querySelector('input[name="locationSource"][value="custom"]').checked = true;
+                    applyFilters();
+                    alert(`自訂參考點 '${customName}' 設定成功！`);
+                } else {
+                    alert('請輸入有效的名稱及經緯度。');
+                }
+            });
+
+            locationSourceRadios.forEach(radio => {
+                radio.addEventListener('change', (e) => {
+                    if (e.target.value === 'dorm') {
+                        myLocation = DORM_LOCATION;
+                        myLocationName = '陽明校區男三舍';
+                        localStorage.removeItem('customLocation');
+                        document.getElementById('locationTitle').textContent = `距離參考點設定: (目前: 陽明校區男三舍)`;
+                    } else if (e.target.value === 'custom' && customLocationData) {
+                        myLocation = { lat: customLocationData.lat, lng: customLocationData.lng };
+                        myLocationName = customLocationData.name;
+                        document.getElementById('locationTitle').textContent = `距離參考點設定: (目前: ${myLocationName})`;
+                    } else if (e.target.value === 'custom') {
+                        alert('請先在後台設定您的自訂經緯度。');
+                        e.target.checked = false;
+                        document.querySelector('input[name="locationSource"][value="dorm"]').checked = true;
+                    }
+                    applyFilters();
+                });
+            });
+
+            clearAllButton.addEventListener('click', () => {
+                if (confirm('確定要清除所有餐廳資料嗎？此操作無法復原。')) {
+                    restaurants = [];
+                    saveRestaurants();
+                    applyFilters();
+                    alert('所有餐廳資料已清除。');
+                }
+            });
+            
+            googleMapBtn.addEventListener('click', () => {
+                const coords = coordsInput.value.trim();
+                if (coords) {
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${coords}`, '_blank');
+                } else {
+                    alert('請先輸入經緯度！');
+                }
+            });
+
+            googleMapSearchBtn.addEventListener('click', () => {
+                const placeName = customNameInput.value.trim();
+                if (placeName) {
+                    window.open(`https://www.google.com/maps/search/?api=1&query=${placeName}`, '_blank');
+                } else {
+                    alert('請先輸入地點名稱！');
+                }
+            });
+
+            toggleAdminBtn.addEventListener('click', () => {
+                const isHidden = adminSection.style.display === 'none' || adminSection.style.display === '';
+                adminSection.style.display = isHidden ? 'block' : 'none';
+                toggleAdminBtn.textContent = isHidden ? '隱藏後台管理' : '顯示/隱藏後台管理';
+            });
+            
+            mergeButton.addEventListener('click', () => {
+                let data1, data2;
+
+                try {
+                    data1 = JSON.parse(json1Input.value);
+                    if (!data1 || !Array.isArray(data1.restaurants)) {
+                        throw new Error('JSON 資料 1 格式不正確，缺少 "restaurants" 陣列。');
+                    }
+                } catch (e) {
+                    alert(`解析 JSON 資料 1 時出錯: ${e.message}`);
+                    return;
+                }
+
+                try {
+                    data2 = JSON.parse(json2Input.value);
+                    if (!data2 || !Array.isArray(data2.restaurants)) {
+                        throw new Error('JSON 資料 2 格式不正確，缺少 "restaurants" 陣列。');
+                    }
+                } catch (e) {
+                    alert(`解析 JSON 資料 2 時出錯: ${e.message}`);
+                    return;
+                }
+
+                const combinedRestaurantsMap = new Map();
+
+                data1.restaurants.forEach(restaurant => {
+                    if (restaurant.isFavorite === undefined) {
+                        restaurant.isFavorite = false;
+                    }
+                    combinedRestaurantsMap.set(restaurant.name, restaurant);
+                });
+
+                data2.restaurants.forEach(restaurant => {
+                    if (!combinedRestaurantsMap.has(restaurant.name)) {
+                        if (restaurant.isFavorite === undefined) {
+                            restaurant.isFavorite = false;
+                        }
+                        combinedRestaurantsMap.set(restaurant.name, restaurant);
+                    }
+                });
+
+                restaurants = Array.from(combinedRestaurantsMap.values());
+                saveRestaurants();
+                applyFilters();
+                
+                alert('資料合併成功！重複的餐廳已自動排除並匯入到您的清單中。');
+                
+                json1Input.value = '';
+                json2Input.value = '';
+            });
+
+            applyFilters();
         });
     </script>
-
-    <iframe width="100%" height="300" scrolling="no" frameborder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/tracks/930361060&color=%23eceae7&auto_play=false&hide_related=false&show_comments=true&show_user=true&show_reposts=false&show_teaser=true&visual=true"></iframe>
-    <div style="font-size: 10px; color: #cccccc;line-break: anywhere;word-break: normal;overflow: hidden;white-space: nowrap;text-overflow: ellipsis; font-family: Interstate,Lucida Grande,Lucida Sans Unicode,Lucida Sans,Garuda,Verdana,Tahoma,sans-serif;font-weight: 100;"><a href="https://soundcloud.com/nnanakh011002" title="Nnana Kh" target="_blank" style="color: #cccccc; text-decoration: none;">Nnana Kh</a> · <a href="https://soundcloud.com/nnanakh011002/ll-harehare-ya-ver-sou-clear" title="ハレハレヤ ll Harehare Ya - ver.Sou [Clear and Sunny]" target="_blank" style="color: #cccccc; text-decoration: none;">ハレハレヤ ll Harehare Ya - ver.Sou [Clear and Sunny]</a></div>
 </body>
 </html>
