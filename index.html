@@ -103,9 +103,7 @@
             border-radius: 8px;
             margin-bottom: 8px;
             display: flex;
-            justify-content: space-between;
-            align-items: center;
-            border-left: 5px solid #5cb85c;
+            flex-direction: column; /* Changed to column to stack text and buttons */
             cursor: pointer;
             transition: transform 0.2s, background-color 0.2s;
         }
@@ -117,11 +115,16 @@
             border-left: 5px solid #ffc107;
             background: rgba(255, 243, 205, 0.9);
         }
-        li .action-buttons {
+        .restaurant-info {
+            flex-grow: 1;
+            margin-bottom: 10px;
+        }
+        .action-buttons {
             display: flex;
             gap: 5px;
+            justify-content: flex-end; /* Align buttons to the right */
         }
-        li .action-buttons button {
+        .action-buttons button {
             background-color: #d9534f;
             color: white;
             border: none;
@@ -129,20 +132,21 @@
             cursor: pointer;
             border-radius: 5px;
             transition: background-color 0.3s;
+            width: auto;
         }
-        li .action-buttons .delete-btn:hover {
+        .action-buttons .delete-btn:hover {
             background-color: #c9302c;
         }
-        li .action-buttons .edit-btn {
+        .action-buttons .edit-btn {
             background-color: #f0ad4e;
         }
-        li .action-buttons .edit-btn:hover {
+        .action-buttons .edit-btn:hover {
             background-color: #ec971f;
         }
-        li .action-buttons .favorite-btn {
+        .action-buttons .favorite-btn {
             background-color: #ffc107;
         }
-        li .action-buttons .favorite-btn.active {
+        .action-buttons .favorite-btn.active {
             background-color: #28a745;
         }
 
@@ -340,6 +344,27 @@
             text-decoration: none;
             cursor: pointer;
         }
+        .coords-input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .coords-input-group input {
+            flex-grow: 1;
+        }
+        .coords-input-group .map-link-btn {
+            width: auto;
+            padding: 10px 15px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .coords-input-group .map-link-btn:hover {
+            background-color: #0056b3;
+        }
     </style>
 </head>
 <body>
@@ -468,7 +493,10 @@
                 <input type="text" id="tags" required>
 
                 <label for="coords">經緯度 (格式: 緯度,經度):</label>
-                <input type="text" id="coords" placeholder="例: 25.11666, 121.51733" required>
+                <div class="coords-input-group">
+                    <input type="text" id="coords" placeholder="例: 25.11666, 121.51733" required>
+                    <button type="button" id="googleMapBtn" class="map-link-btn">連到Google Map</button>
+                </div>
 
                 <button id="submitBtn" type="submit">新增</button>
             </form>
@@ -515,6 +543,7 @@
             const locationTitle = document.getElementById('locationTitle');
             const clearAllButton = document.getElementById('clearAllButton');
             const customDistanceRadio = document.getElementById('customDistanceRadio');
+            const googleMapBtn = document.getElementById('googleMapBtn');
 
 
             // 陽明校區男三舍的經緯度 (固定參考點)
@@ -903,11 +932,11 @@
                             li.classList.add('favorite');
                         }
                         li.innerHTML = `
-                            <div>
-                                <strong>${restaurant.name}</strong> - ${restaurant.type}
-                                <br>評分: ${restaurant.rating} | 營業時間: ${restaurant.hours}
-                                <br>距離${myLocationName}: ${distance.toFixed(0)} 公尺
-                                <br>標籤: ${restaurant.tags.join(', ')}
+                            <div class="restaurant-info">
+                                <strong>${restaurant.name}</strong> - ${restaurant.type}<br>
+                                評分: ${restaurant.rating} | 營業時間: ${restaurant.hours}<br>
+                                距離${myLocationName}: ${distance.toFixed(0)} 公尺<br>
+                                標籤: ${restaurant.tags.join(', ')}
                             </div>
                             <div class="action-buttons">
                                 <button class="favorite-btn" data-index="${restaurants.indexOf(restaurant)}">${restaurant.isFavorite ? '已加最愛' : '加入最愛'}</button>
@@ -1146,6 +1175,20 @@
                 
                 // 重新渲染列表
                 renderRestaurants();
+            });
+
+            // 新增Google Map按鈕的事件監聽器
+            googleMapBtn.addEventListener('click', (e) => {
+                e.preventDefault();
+                const coordsString = coordsInput.value;
+                const [lat, lng] = coordsString.split(',').map(coord => coord.trim());
+
+                if (lat && lng) {
+                    const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${lat},${lng}`;
+                    window.open(mapsUrl, '_blank');
+                } else {
+                    alert('請輸入有效的經緯度。');
+                }
             });
 
             // Modal events
