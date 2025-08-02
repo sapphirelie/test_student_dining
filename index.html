@@ -7,13 +7,14 @@
     <style>
         body {
             font-family: 'Arial', sans-serif;
-            background-image: url('https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIEZ1r9AivIiXLBIA9omwPAC3INvAMLxazAAg~tplv-dy-aweme-images:q75.webp?biz_tag=aweme_images&from=327834062&lk3s=138a59ce&s=PackSourceEnum_SEARCH&sc=image&se=false&x-expires=1756465200&x-signature=bGYgm0MkQ1%2BoDGbGVokAmv%2FEuL0%3D');
+            background-image: var(--background-image);
             background-size: cover;
             background-position: center;
             background-attachment: fixed;
             color: #333;
             margin: 0;
             padding: 20px;
+            transition: background-image 1s ease-in-out;
         }
         .container {
             max-width: 900px;
@@ -159,6 +160,7 @@
             padding: 15px;
             background: rgba(230, 240, 255, 0.9);
             border-radius: 8px;
+            display: none;
         }
         #musicPlayer {
             text-align: center;
@@ -221,61 +223,10 @@
         .nav-link:hover {
             background-color: #0056b3;
         }
-        .data-io {
-            margin-top: 20px;
-            text-align: center;
-        }
-        .data-io textarea {
-            width: 100%;
-            height: 100px;
-            margin-top: 10px;
-            padding: 10px;
-            border-radius: 8px;
-            border: 1px solid #ccc;
-            box-sizing: border-box;
-        }
-        .data-io .btn-group {
-            display: flex;
-            justify-content: space-around;
-            margin-top: 10px;
-        }
-        .data-io .btn-group button {
-            width: 48%;
-        }
-        .custom-location-filter {
-            margin-top: 15px;
-            padding: 15px;
-            border-top: 1px dashed #ccc;
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            border-radius: 10px;
-            background: #f1f1f1;
-        }
-        .custom-location-filter .input-group {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        .custom-location-filter label {
-            width: auto;
-            margin-bottom: 0;
-            white-space: nowrap;
-        }
-        .custom-location-filter input {
-            flex-grow: 1;
-            margin-bottom: 0;
-            background-color: #fff;
-            border: 1px solid #ccc;
-        }
-        .custom-location-filter button {
-            width: 100%;
-            margin-bottom: 0;
-            background-color: #337ab7;
-        }
+        
         .clear-btn {
             background-color: #6c757d;
-            margin-top: 10px;
+            margin-top: 0; /* 移除此邊界以解決對齊問題 */
         }
         .clear-btn:hover {
             background-color: #5a6268;
@@ -294,9 +245,34 @@
             padding: 8px 15px;
             border-radius: 20px;
             cursor: pointer;
-            transition: background-color 0.3s, box-shadow 0.3s;
             width: auto;
         }
+        .custom-location-list {
+            margin-top: 10px;
+        }
+        .custom-location-list li {
+            background: #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-bottom: 5px;
+        }
+        .custom-location-list li label {
+            margin: 0;
+            flex-grow: 1;
+        }
+        .custom-location-list .delete-location-btn {
+            width: auto;
+            background-color: #d9534f;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 0;
+        }
+
 
         /* Modal Styles */
         .modal {
@@ -379,10 +355,190 @@
             margin-bottom: 20px;
             width: 100%;
         }
-        #mergeDataSection {
-            margin-top: 20px;
-            padding-top: 20px;
-            border-top: 1px dashed #ccc;
+        .admin-feature-group {
+            border-bottom: 1px dashed #ccc;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        .admin-feature-group:last-child {
+            border-bottom: none;
+            margin-bottom: 0;
+            padding-bottom: 0;
+        }
+        .admin-feature-group .btn-group {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        #passwordInput {
+            -webkit-text-security: disc;
+            text-security: disc;
+        }
+        
+        .input-group-with-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .textarea-container {
+            position: relative;
+        }
+        textarea {
+            width: 100%;
+            height: 100px;
+            margin-top: 10px;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ccc;
+            box-sizing: border-box;
+        }
+
+        /* 修改後的按鈕群組樣式 */
+        .copy-paste-btns {
+            position: absolute;
+            bottom: 5px;
+            right: 5px;
+            display: flex;
+            gap: 5px;
+            align-items: center; /* 確保垂直居中對齊 */
+        }
+
+        /* 讓按鈕更小，並確保高度一致 */
+        .copy-paste-btns button {
+            width: auto;
+            padding: 5px 10px; /* 放大內邊距 */
+            font-size: 12px; /* 放大字體 */
+            background-color: #007bff;
+            border: none;
+            /* 調整高度以配合新的內邊距 */
+            height: 30px; 
+            line-height: 1;
+        }
+        .copy-paste-btns button:hover {
+            background-color: #0056b3;
+        }
+
+        /* 可收合區塊樣式 - 更新為更簡潔的卡片風格 */
+        .expandable-container {
+            border: 1px solid #e0e0e0;
+            border-radius: 12px;
+            background: rgba(249, 249, 249, 0.9);
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            overflow: hidden; /* 確保內容展開時的圓角效果 */
+        }
+        
+        .expandable-header {
+            padding: 15px 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 1em; /* 調整為更小的字體 */
+            font-weight: bold;
+            color: #337ab7;
+            background: #eaf3ff;
+            border-bottom: 1px solid #d6eaff;
+            transition: background-color 0.3s;
+        }
+        .expandable-header:hover {
+            background: #d6eaff;
+        }
+        .expandable-header h2 {
+            margin: 0;
+            text-align: left;
+            flex-grow: 1;
+            font-size: 1em; /* 確保 h2 標籤的字體大小也被縮小 */
+        }
+        .expandable-header .toggle-icon {
+            font-size: 1.5em;
+            font-weight: normal;
+            transition: transform 0.3s;
+            color: #337ab7;
+        }
+        .expandable-header.collapsed .toggle-icon {
+            transform: rotate(0deg);
+        }
+        .expandable-header.expanded .toggle-icon {
+            transform: rotate(90deg);
+        }
+        .expandable-content {
+            max-height: 0;
+            padding: 0 20px;
+            overflow: hidden;
+            transition: max-height 0.5s ease-in-out, padding 0.5s ease-in-out;
+        }
+        .expandable-content.expanded {
+            max-height: 1000px;
+            padding: 20px;
+        }
+
+        .custom-location-manager {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            border-radius: 10px;
+        }
+        .custom-location-manager .input-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .custom-location-manager label {
+            width: auto;
+            margin-bottom: 0;
+            white-space: nowrap;
+        }
+        .custom-location-manager input {
+            flex-grow: 1;
+            margin-bottom: 0;
+            background-color: #fff;
+            border: 1px solid #ccc;
+        }
+        .custom-location-manager button {
+            width: 100%;
+            margin-bottom: 0;
+            background-color: #337ab7;
+        }
+        .custom-location-list {
+            margin-top: 10px;
+        }
+        .custom-location-list li {
+            background: #e9ecef;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 15px;
+            border-radius: 20px;
+            margin-bottom: 5px;
+        }
+        .custom-location-list li label {
+            margin: 0;
+            flex-grow: 1;
+        }
+        .custom-location-list .delete-location-btn {
+            width: auto;
+            background-color: #d9534f;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-size: 12px;
+            margin: 0;
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .data-io .btn-group,
+            .admin-feature-group .btn-group {
+                flex-direction: column;
+            }
+            .data-io .btn-group button,
+            .admin-feature-group .btn-group button {
+                width: 100%;
+            }
         }
     </style>
 </head>
@@ -391,23 +547,115 @@
         <h1>陽明交大美食推薦</h1>
         
         <button id="toggleAdminBtn" class="clear-btn">顯示/隱藏後台管理</button>
-
+        
         <div id="adminSection">
             <h2>後台管理</h2>
             
-            <div class="section data-io">
-                <h3>資料儲存與分享</h3>
-                <p>餐廳資料已自動儲存至瀏覽器，重開網頁也不會遺失。</p>
-                <p>您可以匯出/匯入資料以進行備份或與他人分享。</p>
-                <textarea id="jsonData" placeholder="在此貼上您要匯入的JSON資料..."></textarea>
+            <div class="section admin-feature-group">
+                <h3>後台背景圖與密碼設定</h3>
+                <p>選擇圖片以更改後台背景圖，密碼將自動更新。</p>
+                <div class="input-group">
+                    <label for="passwordImageSelect">選擇圖片:</label>
+                    <select id="passwordImageSelect">
+                        <option value="default">預設 (今汐)</option>
+                        <option value="longli">長離</option>
+                        <option value="shorewalker">守岸人</option>
+                        <option value="fluro">弗洛洛</option>
+                    </select>
+                </div>
+                <button id="applyImageAndPassBtn">套用</button>
+            </div>
+            
+            <div class="section admin-feature-group">
+                <h3>一鍵標籤管理</h3>
+                <div class="input-group">
+                    <label for="bulkTag">選擇標籤:</label>
+                    <input type="text" id="bulkTag" placeholder="例: 小吃">
+                </div>
                 <div class="btn-group">
-                    <button id="exportButton">匯出資料</button>
-                    <button id="importButton">匯入資料</button>
+                    <button id="addTagBulk">新增標籤到所有餐廳</button>
+                    <button id="removeTagBulk" class="clear-btn">從所有餐廳移除標籤</button>
                 </div>
             </div>
 
-            <div class="section custom-location-filter">
-                <h3>自訂距離參考點</h3>
+            <div class="section admin-feature-group">
+                <h3>批量調整評分</h3>
+                <p>請輸入要增加或減少的數值 (負數表示減少):</p>
+                <div class="input-group">
+                    <label for="ratingAdjust">調整數值:</label>
+                    <input type="number" id="ratingAdjust" step="0.1" placeholder="例: 0.5 或 -0.2">
+                </div>
+                <button id="applyRatingAdjust">套用評分調整</button>
+            </div>
+            
+            <div class="section admin-feature-group">
+                <h3>資料完整性檢查</h3>
+                <button id="checkDataIntegrity">開始檢查</button>
+                <div id="integrityResult" style="margin-top: 10px; font-size: 0.9em;"></div>
+            </div>
+
+            <div class="section admin-feature-group" id="mergeDataSection">
+                <h3>餐廳資料合併工具</h3>
+                <p>將兩份 JSON 資料合併，自動排除重複餐廳。</p>
+                <div class="input-group-with-buttons">
+                    <label for="json1">JSON 資料 1:</label>
+                    <div class="textarea-container">
+                        <textarea id="json1" placeholder="在此貼上第一份 JSON 資料..."></textarea>
+                        <div class="copy-paste-btns">
+                            <button class="copy-json" data-target="json1">複製</button>
+                            <button class="paste-json" data-target="json1">貼上</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="input-group-with-buttons">
+                    <label for="json2">JSON 資料 2:</label>
+                    <div class="textarea-container">
+                        <textarea id="json2" placeholder="在此貼上第二份 JSON 資料..."></textarea>
+                        <div class="copy-paste-btns">
+                            <button class="copy-json" data-target="json2">複製</button>
+                            <button class="paste-json" data-target="json2">貼上</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="button-group">
+                    <button id="mergeButton">合併資料並匯入</button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="expandable-container" id="dataIoContainer">
+            <div class="expandable-header collapsed" id="dataIoHeader">
+                <h2>資料儲存與分享</h2>
+                <span class="toggle-icon">▶</span>
+            </div>
+            <div class="expandable-content" id="dataIoContent">
+                <p>餐廳資料已自動儲存至瀏覽器，重開網頁也不會遺失。</p>
+                <p>您可以匯出/匯入資料以進行備份或與他人分享。</p>
+                <div class="input-group-with-buttons">
+                    <div class="textarea-container">
+                        <textarea id="jsonData" placeholder="在此貼上您要匯入的JSON資料..."></textarea>
+                        <div class="copy-paste-btns">
+                            <button id="copyJsonBtn" class="clear-btn">複製</button>
+                            <button id="pasteJsonBtn">貼上</button>
+                        </div>
+                    </div>
+                    <div class="btn-group">
+                        <button id="exportButton">匯出資料</button>
+                        <button id="importButton">匯入資料</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="expandable-container" id="customLocationContainer">
+            <div class="expandable-header collapsed" id="customLocationHeader">
+                <h2>自訂距離參考點</h2>
+                <span class="toggle-icon">▶</span>
+            </div>
+            <div class="expandable-content" id="customLocationContent">
                 <p>將「自訂經緯度」設定為參考點，並將此位置儲存至瀏覽器。</p>
                 <div class="input-group">
                     <label for="customName">自訂名稱:</label>
@@ -418,27 +666,14 @@
                     <label for="customCoords">經緯度 (格式: 緯度,經度):</label>
                     <input type="text" id="customCoords" placeholder="例: 25.12297, 121.51200">
                 </div>
-                <button id="setCustomLocation">設定為參考點並儲存</button>
-            </div>
-
-            <div id="mergeDataSection" class="section">
-                <h3>餐廳資料合併工具</h3>
-                <div class="input-group">
-                    <label for="json1">JSON 資料 1:</label>
-                    <textarea id="json1" placeholder="在此貼上第一份 JSON 資料..."></textarea>
-                </div>
-
-                <div class="input-group">
-                    <label for="json2">JSON 資料 2:</label>
-                    <textarea id="json2" placeholder="在此貼上第二份 JSON 資料..."></textarea>
-                </div>
-
-                <div class="button-group">
-                    <button id="mergeButton">合併資料並匯入</button>
+                <button id="addCustomLocation">新增為參考點</button>
+                <div class="custom-location-list">
+                    <ul id="customLocationsList"></ul>
                 </div>
             </div>
         </div>
 
+        
         <div class="section">
             <h2>功能區</h2>
             <div id="musicPlayer">
@@ -449,6 +684,7 @@
                     <option value="FlowerDancecopy.mpm">Flower Dance</option>
                     <option value="memories.mp3">Memories</option>
                     <option value="BeethovenVirus.mp3">Beethoven Virus</option>
+                    <option value="LonelyWarrior.mp3">孤勇者</option>
                 </select>
                 <button id="musicButton" class="music-button">播放音樂</button>
             </div>
@@ -474,10 +710,9 @@
                 </div>
 
                 <div class="custom-location-filter">
-                    <h4 id="locationTitle">距離參考點設定:</h4>
-                    <div class="checkbox-group">
+                    <h4 id="locationTitle">距離參考點設定: (目前: 陽明校區男三舍)</h4>
+                    <div id="locationSourceRadios" class="checkbox-group">
                         <label><input type="radio" name="locationSource" value="dorm" checked> 陽明校區男三舍</label>
-                        <label><input type="radio" name="locationSource" value="custom"> 自訂經緯度</label>
                     </div>
                 </div>
 
@@ -538,6 +773,8 @@
                 <label for="tags">標籤 (用逗號分隔, 例: 主食, 小吃):</label>
                 <input type="text" id="tags" required>
 
+                <input type="hidden" id="weight" value="1">
+
                 <label for="coords">經緯度 (格式: 緯度,經度):</label>
                 <div class="coords-input-group">
                     <input type="text" id="coords" placeholder="例: 25.11666, 121.51733" required>
@@ -554,6 +791,15 @@
             <div id="modalContentDetails"></div>
         </div>
     </div>
+    
+    <div id="passwordModal" class="modal">
+        <div class="modal-content">
+            <h3>請輸入密碼</h3>
+            <input type="text" id="passwordInput">
+            <button id="passwordSubmitBtn">確認</button>
+        </div>
+    </div>
+
 
     <script>
         document.addEventListener('DOMContentLoaded', () => {
@@ -582,8 +828,8 @@
             const coordsInput = document.getElementById('coords');
             const customCoordsInput = document.getElementById('customCoords');
             const customNameInput = document.getElementById('customName');
-            const setCustomLocationButton = document.getElementById('setCustomLocation');
-            const locationSourceRadios = document.querySelectorAll('input[name="locationSource"]');
+            const addCustomLocationButton = document.getElementById('addCustomLocation');
+            const locationSourceRadiosContainer = document.getElementById('locationSourceRadios');
             const locationTitle = document.getElementById('locationTitle');
             const clearAllButton = document.getElementById('clearAllButton');
             const customDistanceRadio = document.getElementById('customDistanceRadio');
@@ -591,22 +837,64 @@
             const googleMapSearchBtn = document.getElementById('googleMapSearchBtn');
             const toggleAdminBtn = document.getElementById('toggleAdminBtn');
             const adminSection = document.getElementById('adminSection');
+            
+            const bulkTagInput = document.getElementById('bulkTag');
+            const addTagBulkBtn = document.getElementById('addTagBulk');
+            const removeTagBulkBtn = document.getElementById('removeTagBulk');
+            const ratingAdjustInput = document.getElementById('ratingAdjust');
+            const applyRatingAdjustBtn = document.getElementById('applyRatingAdjust');
+            const checkDataIntegrityBtn = document.getElementById('checkDataIntegrity');
+            const integrityResultDiv = document.getElementById('integrityResult');
 
             const json1Input = document.getElementById('json1');
             const json2Input = document.getElementById('json2');
             const mergeButton = document.getElementById('mergeButton');
+            
+            const passwordModal = document.getElementById('passwordModal');
+            const passwordInput = document.getElementById('passwordInput');
+            const passwordSubmitBtn = document.getElementById('passwordSubmitBtn');
+            const passwordImageSelect = document.getElementById('passwordImageSelect');
+            const applyImageAndPassBtn = document.getElementById('applyImageAndPassBtn');
 
-            const DORM_LOCATION = { lat: 25.122973560805033, lng: 121.51200418632095 };
+            const copyJsonBtn = document.getElementById('copyJsonBtn');
+            const pasteJsonBtn = document.getElementById('pasteJsonBtn');
+            const copyMergeBtns = document.querySelectorAll('.copy-json');
+            const pasteMergeBtns = document.querySelectorAll('.paste-json');
+
+            const customLocationsList = document.getElementById('customLocationsList');
+
+            const dataIoHeader = document.getElementById('dataIoHeader');
+            const dataIoContent = document.getElementById('dataIoContent');
+            const customLocationHeader = document.getElementById('customLocationHeader');
+            const customLocationContent = document.getElementById('customLocationContent');
+
+            const DORM_LOCATION = { lat: 25.122973560805033, lng: 121.51200418632095, name: '陽明校區男三舍' };
             let myLocation = DORM_LOCATION;
-            let myLocationName = '陽明校區男三舍';
-            let customLocationData = JSON.parse(localStorage.getItem('customLocation')) || null;
-            if (customLocationData) {
-                myLocation = { lat: customLocationData.lat, lng: customLocationData.lng };
-                myLocationName = customLocationData.name;
-            }
-
-            let customDistanceValue = null;
+            let customLocations = JSON.parse(localStorage.getItem('customLocations')) || [];
             let editingIndex = null;
+            let customDistanceValue = null;
+            let currentPassword = localStorage.getItem('adminPassword') || '今汐';
+            let currentBackgroundImage = localStorage.getItem('backgroundImage') || 'https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIEZ1r9AivIiXLBIA9omwPAC3INvAMLxazAAg~tplv-dy-aweme-images:q75.webp?biz_tag=aweme_images&from=327834062&lk3s=138a59ce&s=PackSourceEnum_SEARCH&sc=image&se=false&x-expires=1756465200&x-signature=bGYgm0MkQ1%2BoDGbGVokAmv%2FEuL0%3D';
+            
+            const PASSWORD_IMAGES = {
+                'default': {
+                    'url': 'https://p3-pc-sign.douyinpic.com/tos-cn-i-0813/oIEZ1r9AivIiXLBIA9omwPAC3INvAMLxazAAg~tplv-dy-aweme-images:q75.webp?biz_tag=aweme_images&from=327834062&lk3s=138a59ce&s=PackSourceEnum_SEARCH&sc=image&se=false&x-expires=1756465200&x-signature=bGYgm0MkQ1%2BoDGbGVokAmv%2FEuL0%3D',
+                    'password': '今汐'
+                },
+                'longli': {
+                    'url': 'https://pic4.zhimg.com/v2-8e56648db82d01dc10eabf6e94a50bb9_1440w.jpg',
+                    'password': '長離'
+                },
+                'shorewalker': {
+                    'url': 'https://img-baofun.zhhainiao.com/pcwallpaper_ugc_mobile/static/ad1b243976c3b43816e941590274af8a.jpg',
+                    'password': '守岸人'
+                },
+                'fluro': {
+                    'url': 'https://truth.bahamut.com.tw/s01/202507/forum/74934/69dd4bb4c1fbe4f90be0a9cf87040d4a.JPG',
+                    'password': '弗洛洛'
+                }
+            };
+
 
             let restaurants = JSON.parse(localStorage.getItem('restaurants')) || [
                 {
@@ -622,7 +910,8 @@
                     "location": "陽明校區",
                     "lat": 25.12180104401591,
                     "lng": 121.5143143070673,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "吉豚屋 石牌店",
@@ -637,7 +926,8 @@
                     "location": "陽明校區",
                     "lat": 25.11609237465052,
                     "lng": 121.51539652208888,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "莎諾西餐",
@@ -652,7 +942,8 @@
                     "location": "陽明校區",
                     "lat": 25.119000398429364,
                     "lng": 121.52371796441778,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "Creative Pasta 創義麵 石牌店",
@@ -667,7 +958,8 @@
                     "location": "陽明校區",
                     "lat": 25.117171958343363,
                     "lng": 121.51648565090608,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "朝九晚五早午餐",
@@ -682,7 +974,8 @@
                     "location": "陽明校區",
                     "lat": 25.119173311723237,
                     "lng": 121.51467893555883,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "陳季炸雞 石牌店",
@@ -698,7 +991,8 @@
                     "location": "陽明校區",
                     "lat": 25.11694545909602,
                     "lng": 121.51651246616777,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "吳記排骨酥 石牌店",
@@ -714,7 +1008,8 @@
                     "location": "陽明校區",
                     "lat": 25.116988144319897,
                     "lng": 121.51673982024002,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "阿財鍋貼餃子專賣店",
@@ -730,7 +1025,8 @@
                     "location": "陽明校區",
                     "lat": 25.11648705871863,
                     "lng": 121.51793064907864,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "水龜伯古早味",
@@ -745,7 +1041,8 @@
                     "location": "陽明校區",
                     "lat": 25.117119572816343,
                     "lng": 121.51581563558221,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "阿亮小吃",
@@ -762,7 +1059,8 @@
                     "location": "陽明校區",
                     "lat": 25.11222199036574,
                     "lng": 121.51028153827572,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "白家十全排骨（石牌店）",
@@ -778,7 +1076,8 @@
                     "location": "陽明校區",
                     "lat": 25.120240065071094,
                     "lng": 121.51665179977125,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "彈芽麵",
@@ -794,7 +1093,8 @@
                     "location": "陽明校區",
                     "lat": 25.11625300321784,
                     "lng": 121.51788160667961,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "侯美國紅茶好吃雞（石牌店）",
@@ -809,7 +1109,8 @@
                     "location": "陽明校區",
                     "lat": 25.116690159194476,
                     "lng": 121.51812433558221,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "壽司郎（石牌店）",
@@ -824,7 +1125,8 @@
                     "location": "陽明校區",
                     "lat": 25.118324,
                     "lng": 121.518128,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "大三元便當快餐",
@@ -837,7 +1139,8 @@
                     "location": "陽明校區",
                     "lat": 25.116819,
                     "lng": 121.516877,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "2派克脆皮雞排 石牌店",
@@ -850,7 +1153,8 @@
                     "location": "陽明校區",
                     "lat": 25.116749,
                     "lng": 121.517211,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "大嘴巴牛排",
@@ -865,7 +1169,8 @@
                     "location": "陽明校區",
                     "lat": 25.116572,
                     "lng": 121.516628,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 },
                 {
                     "name": "德州美墨炸雞 天母店",
@@ -880,7 +1185,8 @@
                     "location": "陽明校區",
                     "lat": 25.115703,
                     "lng": 121.52828,
-                    "isFavorite": false
+                    "isFavorite": false,
+                    "weight": 1
                 }
             ];
 
@@ -889,8 +1195,18 @@
                     if (r.isFavorite === undefined || typeof r.isFavorite !== 'boolean') {
                         r.isFavorite = false;
                     }
+                    if (r.weight === undefined || typeof r.weight !== 'number') {
+                        r.weight = 1;
+                    }
                 });
             }
+
+            function setBackgroundImage(url) {
+                document.body.style.setProperty('--background-image', `url(${url})`);
+                localStorage.setItem('backgroundImage', url);
+            }
+            
+            setBackgroundImage(currentBackgroundImage);
 
             function haversineDistance(lat1, lon1, lat2, lon2) {
                 const toRad = (x) => x * Math.PI / 180;
@@ -923,7 +1239,7 @@
                 }
 
                 const intervals = hours.match(/(\d{2}:\d{2})–(\d{2}:\d{2})/g);
-                if (!intervals) return false;
+                if (!intervals) return true;
 
                 for (const interval of intervals) {
                     const [start, end] = interval.split('–').map(t => {
@@ -936,6 +1252,82 @@
                     }
                 }
                 return false;
+            }
+
+            function renderLocationRadios() {
+                locationSourceRadiosContainer.innerHTML = '';
+                
+                const dormRadio = document.createElement('label');
+                dormRadio.innerHTML = `<input type="radio" name="locationSource" value="dorm" checked> ${DORM_LOCATION.name}`;
+                locationSourceRadiosContainer.appendChild(dormRadio);
+
+                customLocations.forEach((loc, index) => {
+                    const customRadio = document.createElement('label');
+                    customRadio.innerHTML = `<input type="radio" name="locationSource" value="custom-${index}"> ${loc.name} <button class="delete-location-btn" data-index="${index}">刪除</button>`;
+                    locationSourceRadiosContainer.appendChild(customRadio);
+                });
+
+                document.querySelectorAll('input[name="locationSource"]').forEach(radio => {
+                    radio.addEventListener('change', (e) => {
+                        if (e.target.value === 'dorm') {
+                            myLocation = DORM_LOCATION;
+                        } else {
+                            const index = parseInt(e.target.value.split('-')[1], 10);
+                            myLocation = customLocations[index];
+                        }
+                        locationTitle.textContent = `距離參考點設定: (目前: ${myLocation.name})`;
+                        applyFilters();
+                    });
+                });
+
+                document.querySelectorAll('.delete-location-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const index = parseInt(e.target.dataset.index, 10);
+                        if (confirm(`確定要刪除參考點「${customLocations[index].name}」嗎？`)) {
+                            customLocations.splice(index, 1);
+                            localStorage.setItem('customLocations', JSON.stringify(customLocations));
+                            if (myLocation.name === DORM_LOCATION.name) {
+                                document.querySelector('input[name="locationSource"][value="dorm"]').checked = true;
+                            } else {
+                                const selectedRadio = document.querySelector('input[name="locationSource"][value^="custom"]:checked');
+                                if (!selectedRadio) {
+                                    document.querySelector('input[name="locationSource"][value="dorm"]').checked = true;
+                                    myLocation = DORM_LOCATION;
+                                    locationTitle.textContent = `距離參考點設定: (目前: ${myLocation.name})`;
+                                }
+                            }
+                            renderLocationRadios();
+                            applyFilters();
+                        }
+                    });
+                });
+            }
+
+            function renderCustomLocationsList() {
+                customLocationsList.innerHTML = '';
+                customLocations.forEach((loc, index) => {
+                    const li = document.createElement('li');
+                    li.innerHTML = `
+                        <span>${loc.name} (${loc.lat.toFixed(5)}, ${loc.lng.toFixed(5)})</span>
+                        <button class="delete-location-btn" data-index="${index}">刪除</button>
+                    `;
+                    customLocationsList.appendChild(li);
+                });
+                
+                document.querySelectorAll('.delete-location-btn').forEach(button => {
+                    button.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        const index = parseInt(e.target.dataset.index, 10);
+                        if (confirm(`確定要刪除參考點「${customLocations[index].name}」嗎？`)) {
+                            customLocations.splice(index, 1);
+                            localStorage.setItem('customLocations', JSON.stringify(customLocations));
+                            renderLocationRadios();
+                            renderCustomLocationsList();
+                            applyFilters();
+                        }
+                    });
+                });
             }
 
             function renderRestaurants(filterCriteria = {}) {
@@ -998,16 +1390,17 @@
                 filteredRestaurants.forEach((r, index) => {
                     const li = document.createElement('li');
                     
-                    // 修正此處，避免新增空 class 名稱
                     if (r.isFavorite) {
                         li.classList.add('favorite');
                     }
+                    
+                    li.dataset.restaurantIndex = restaurants.findIndex(item => item.name === r.name);
                     
                     li.innerHTML = `
                         <div class="restaurant-info">
                             <strong>${r.name}</strong> - ${r.type}<br>
                             評分: ${r.rating} | 營業時間: ${r.hours}<br>
-                            距離${myLocationName}: ${r.distance.toFixed(0)} 公尺<br>
+                            距離${myLocation.name}: ${r.distance.toFixed(0)} 公尺<br>
                             標籤: ${r.tags.join(', ')}
                         </div>
                         <div class="action-buttons">
@@ -1032,14 +1425,17 @@
                 const selectedTags = Array.from(tagFilters)
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
-                const selectedDistance = Array.from(distanceFilters).find(radio => radio.checked)?.value;
-                const sortBy = sortCriteria.value;
+                const selectedDistance = Array.from(document.querySelectorAll('input[name="distanceFilter"]')).find(radio => radio.checked)?.value;
 
+                const distanceValue = selectedDistance === 'custom' ? customDistanceValue : selectedDistance;
+
+                const sortBy = sortCriteria.value;
+                
                 renderRestaurants({
                     openNow,
                     favoritesOnly,
                     tags: selectedTags,
-                    distance: selectedDistance === 'custom' ? customDistanceValue : selectedDistance,
+                    distance: distanceValue,
                     sortBy
                 });
             }
@@ -1051,15 +1447,16 @@
                 const rating = parseFloat(document.getElementById('rating').value);
                 const hours = document.getElementById('hours').value;
                 const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
+                const weight = 1; 
                 const [lat, lng] = document.getElementById('coords').value.split(',').map(Number);
                 
                 if (editingIndex !== null) {
-                    restaurants[editingIndex] = { ...restaurants[editingIndex], name, type, rating, hours, tags, lat, lng };
+                    restaurants[editingIndex] = { ...restaurants[editingIndex], name, type, rating, hours, tags, weight: restaurants[editingIndex].weight, lat, lng };
                     editingIndex = null;
                     submitBtn.textContent = '新增';
                     addRestaurantTitle.textContent = '新增餐廳';
                 } else {
-                    restaurants.push({ name, type, rating, hours, tags, lat, lng, isFavorite: false });
+                    restaurants.push({ name, type, rating, hours, tags, weight, lat, lng, isFavorite: false });
                 }
 
                 saveRestaurants();
@@ -1069,19 +1466,19 @@
 
             restaurantList.addEventListener('click', (e) => {
                 const target = e.target;
-                const index = target.closest('.action-buttons')?.querySelector('button')?.dataset.index;
-                if (!index) return;
-
-                const restaurantIndex = restaurants.findIndex(r => r.name === restaurants[index].name);
+                const li = target.closest('li');
+                if (!li) return;
+                
+                const restaurantIndex = li.dataset.restaurantIndex;
+                const r = restaurants[restaurantIndex];
 
                 if (target.classList.contains('delete-btn')) {
-                    if (confirm(`確定要刪除 ${restaurants[restaurantIndex].name} 嗎？`)) {
+                    if (confirm(`確定要刪除 ${r.name} 嗎？`)) {
                         restaurants.splice(restaurantIndex, 1);
                         saveRestaurants();
                         applyFilters();
                     }
                 } else if (target.classList.contains('edit-btn')) {
-                    const r = restaurants[restaurantIndex];
                     document.getElementById('name').value = r.name;
                     document.getElementById('type').value = r.type;
                     document.getElementById('rating').value = r.rating;
@@ -1094,24 +1491,23 @@
                     addRestaurantTitle.textContent = '更正餐廳資料';
                     window.scrollTo({ top: document.body.scrollHeight, behavior: 'smooth' });
                 } else if (target.classList.contains('favorite-btn')) {
-                    restaurants[restaurantIndex].isFavorite = !restaurants[restaurantIndex].isFavorite;
+                    r.isFavorite = !r.isFavorite;
                     saveRestaurants();
                     applyFilters();
-                } else if (target.closest('li')) {
-                    const r = restaurants[restaurantIndex];
+                } else {
                     showRestaurantModal(r);
                 }
             });
 
             function showRestaurantModal(restaurant) {
-                const mapLink = `https://www.google.com/maps/search/?api=1&query=${restaurant.lat},${restaurant.lng}`;
+                const mapLink = `https://www.google.com/maps/search/?api=1&query=$${restaurant.lat},${restaurant.lng}`;
                 modalContentDetails.innerHTML = `
                     <h3>${restaurant.name}</h3>
                     <p><strong>飲食種類:</strong> ${restaurant.type}</p>
                     <p><strong>評分:</strong> ${restaurant.rating}</p>
                     <p><strong>營業時間:</strong> ${restaurant.hours}</p>
                     <p><strong>標籤:</strong> ${restaurant.tags.join(', ')}</p>
-                    <p><strong>距離${myLocationName}:</strong> ${restaurant.distance.toFixed(0)} 公尺</p>
+                    <p><strong>距離${myLocation.name}:</strong> ${restaurant.distance.toFixed(0)} 公尺</p>
                     <a href="${mapLink}" target="_blank" class="nav-link">在地圖上查看</a>
                 `;
                 restaurantModal.style.display = 'flex';
@@ -1131,18 +1527,39 @@
                 const filteredRestaurants = Array.from(restaurantList.querySelectorAll('li'));
                 if (filteredRestaurants.length === 0) {
                     randomResult.textContent = '目前沒有符合條件的餐廳。';
+                    randomResult.style.display = 'block';
+                    setTimeout(() => randomResult.style.display = 'none', 3000);
                     return;
                 }
-                const randomIndex = Math.floor(Math.random() * filteredRestaurants.length);
-                const randomRestaurant = filteredRestaurants[randomIndex].querySelector('.restaurant-info strong').textContent;
-                randomResult.textContent = `今天吃：${randomRestaurant}`;
+                
+                const weightedList = [];
+                filteredRestaurants.forEach(li => {
+                    const restaurantIndex = li.dataset.restaurantIndex;
+                    const r = restaurants[restaurantIndex];
+                    for (let i = 0; i < r.weight; i++) {
+                        weightedList.push(r);
+                    }
+                });
+
+                if (weightedList.length === 0) {
+                    randomResult.textContent = '目前沒有符合條件的餐廳。';
+                    randomResult.style.display = 'block';
+                    setTimeout(() => randomResult.style.display = 'none', 3000);
+                    return;
+                }
+                
+                const randomIndex = Math.floor(Math.random() * weightedList.length);
+                const randomRestaurant = weightedList[randomIndex];
+                
+                showRestaurantModal(randomRestaurant);
             });
             
             sortCriteria.addEventListener('change', applyFilters);
             openNowFilter.addEventListener('change', applyFilters);
             favoritesFilter.addEventListener('change', applyFilters);
             tagFilters.forEach(checkbox => checkbox.addEventListener('change', applyFilters));
-            distanceFilters.forEach(radio => radio.addEventListener('change', applyFilters));
+            
+            document.querySelectorAll('input[name="distanceFilter"]').forEach(radio => radio.addEventListener('change', applyFilters));
             
             applyCustomDistanceButton.addEventListener('click', () => {
                 customDistanceValue = parseInt(customDistanceInput.value, 10);
@@ -1150,7 +1567,7 @@
                     alert('請輸入有效的距離數值！');
                     return;
                 }
-                customDistanceRadio.checked = true;
+                document.getElementById('customDistanceRadio').checked = true;
                 applyFilters();
             });
 
@@ -1174,7 +1591,7 @@
             exportButton.addEventListener('click', () => {
                 const exportData = {
                     restaurants: restaurants,
-                    customLocation: customLocationData
+                    customLocations: customLocations
                 };
                 jsonDataArea.value = JSON.stringify(exportData, null, 2);
                 alert('資料已匯出至下方的文字框中。');
@@ -1191,22 +1608,17 @@
                         if (r.isFavorite === undefined) {
                             r.isFavorite = false;
                         }
+                        if (r.weight === undefined) {
+                            r.weight = 1;
+                        }
                     });
                     
                     restaurants = importData.restaurants;
-                    customLocationData = importData.customLocation;
-                    if (customLocationData) {
-                        myLocation = { lat: customLocationData.lat, lng: customLocationData.lng };
-                        myLocationName = customLocationData.name;
-                        document.querySelector('input[name="locationSource"][value="custom"]').checked = true;
-                        document.getElementById('locationTitle').textContent = `距離參考點設定: (目前: ${myLocationName})`;
-                    } else {
-                        myLocation = DORM_LOCATION;
-                        myLocationName = '陽明校區男三舍';
-                        document.querySelector('input[name="locationSource"][value="dorm"]').checked = true;
-                        document.getElementById('locationTitle').textContent = `距離參考點設定: (目前: 陽明校區男三舍)`;
-                    }
+                    customLocations = importData.customLocations || [];
+                    
                     saveRestaurants();
+                    renderLocationRadios();
+                    renderCustomLocationsList();
                     applyFilters();
                     alert('資料匯入成功！');
                 } catch (e) {
@@ -1214,42 +1626,21 @@
                 }
             });
 
-            setCustomLocationButton.addEventListener('click', () => {
+            addCustomLocationButton.addEventListener('click', () => {
                 const customName = customNameInput.value.trim();
                 const [lat, lng] = customCoordsInput.value.split(',').map(Number);
 
                 if (customName && !isNaN(lat) && !isNaN(lng)) {
-                    customLocationData = { name: customName, lat, lng };
-                    localStorage.setItem('customLocation', JSON.stringify(customLocationData));
-                    myLocation = { lat, lng };
-                    myLocationName = customName;
-                    document.getElementById('locationTitle').textContent = `距離參考點設定: (目前: ${myLocationName})`;
-                    document.querySelector('input[name="locationSource"][value="custom"]').checked = true;
-                    applyFilters();
-                    alert(`自訂參考點 '${customName}' 設定成功！`);
+                    customLocations.push({ name: customName, lat, lng });
+                    localStorage.setItem('customLocations', JSON.stringify(customLocations));
+                    renderLocationRadios();
+                    renderCustomLocationsList();
+                    customNameInput.value = '';
+                    customCoordsInput.value = '';
+                    alert(`自訂參考點 '${customName}' 新增成功！`);
                 } else {
                     alert('請輸入有效的名稱及經緯度。');
                 }
-            });
-
-            locationSourceRadios.forEach(radio => {
-                radio.addEventListener('change', (e) => {
-                    if (e.target.value === 'dorm') {
-                        myLocation = DORM_LOCATION;
-                        myLocationName = '陽明校區男三舍';
-                        localStorage.removeItem('customLocation');
-                        document.getElementById('locationTitle').textContent = `距離參考點設定: (目前: 陽明校區男三舍)`;
-                    } else if (e.target.value === 'custom' && customLocationData) {
-                        myLocation = { lat: customLocationData.lat, lng: customLocationData.lng };
-                        myLocationName = customLocationData.name;
-                        document.getElementById('locationTitle').textContent = `距離參考點設定: (目前: ${myLocationName})`;
-                    } else if (e.target.value === 'custom') {
-                        alert('請先在後台設定您的自訂經緯度。');
-                        e.target.checked = false;
-                        document.querySelector('input[name="locationSource"][value="dorm"]').checked = true;
-                    }
-                    applyFilters();
-                });
             });
 
             clearAllButton.addEventListener('click', () => {
@@ -1264,7 +1655,7 @@
             googleMapBtn.addEventListener('click', () => {
                 const coords = coordsInput.value.trim();
                 if (coords) {
-                    window.open(`https://www.google.com/maps/search/?api=1&query=${coords}`, '_blank');
+                    window.open(`https://www.google.com/maps/search/?api=1&query=$${coords}`, '_blank');
                 } else {
                     alert('請先輸入經緯度！');
                 }
@@ -1273,16 +1664,125 @@
             googleMapSearchBtn.addEventListener('click', () => {
                 const placeName = customNameInput.value.trim();
                 if (placeName) {
-                    window.open(`https://www.google.com/maps/search/?api=1&query=${placeName}`, '_blank');
+                    window.open(`https://www.google.com/maps/search/?api=1&query=$${encodeURIComponent(placeName)}`, '_blank');
                 } else {
                     alert('請先輸入地點名稱！');
                 }
             });
 
             toggleAdminBtn.addEventListener('click', () => {
-                const isHidden = adminSection.style.display === 'none' || adminSection.style.display === '';
-                adminSection.style.display = isHidden ? 'block' : 'none';
-                toggleAdminBtn.textContent = isHidden ? '隱藏後台管理' : '顯示/隱藏後台管理';
+                if (adminSection.style.display === 'block') {
+                    adminSection.style.display = 'none';
+                    toggleAdminBtn.textContent = '顯示後台管理';
+                } else {
+                    passwordModal.style.display = 'flex';
+                }
+            });
+
+            passwordSubmitBtn.addEventListener('click', () => {
+                if (passwordInput.value === currentPassword) {
+                    passwordModal.style.display = 'none';
+                    adminSection.style.display = 'block';
+                    toggleAdminBtn.textContent = '隱藏後台管理';
+                    passwordInput.value = '';
+                } else {
+                    alert('密碼錯誤！');
+                    passwordInput.value = '';
+                }
+            });
+            
+            passwordInput.addEventListener('keypress', (e) => {
+                if (e.key === 'Enter') {
+                    passwordSubmitBtn.click();
+                }
+            });
+
+            applyImageAndPassBtn.addEventListener('click', () => {
+                const selectedKey = passwordImageSelect.value;
+                const selectedImage = PASSWORD_IMAGES[selectedKey];
+                if (selectedImage) {
+                    currentPassword = selectedImage.password;
+                    currentBackgroundImage = selectedImage.url;
+                    localStorage.setItem('adminPassword', currentPassword);
+                    localStorage.setItem('backgroundImage', currentBackgroundImage);
+                    setBackgroundImage(currentBackgroundImage);
+                    alert(`背景圖與密碼已更改為「${selectedKey}」，新密碼為「${currentPassword}」。`);
+                }
+            });
+            
+            for (const key in PASSWORD_IMAGES) {
+                if (PASSWORD_IMAGES[key].url === currentBackgroundImage) {
+                    passwordImageSelect.value = key;
+                    break;
+                }
+            }
+
+
+            addTagBulkBtn.addEventListener('click', () => {
+                const tag = bulkTagInput.value.trim();
+                if (tag === '') {
+                    alert('請輸入一個標籤！');
+                    return;
+                }
+                restaurants.forEach(r => {
+                    if (!r.tags.includes(tag)) {
+                        r.tags.push(tag);
+                    }
+                });
+                saveRestaurants();
+                applyFilters();
+                alert(`已將標籤「${tag}」新增至所有餐廳。`);
+            });
+
+            removeTagBulkBtn.addEventListener('click', () => {
+                const tag = bulkTagInput.value.trim();
+                if (tag === '') {
+                    alert('請輸入一個標籤！');
+                    return;
+                }
+                restaurants.forEach(r => {
+                    r.tags = r.tags.filter(t => t !== tag);
+                });
+                saveRestaurants();
+                applyFilters();
+                alert(`已從所有餐廳移除標籤「${tag}」。`);
+            });
+
+            applyRatingAdjustBtn.addEventListener('click', () => {
+                const adjustValue = parseFloat(ratingAdjustInput.value);
+                if (isNaN(adjustValue)) {
+                    alert('請輸入一個有效的數字！');
+                    return;
+                }
+                restaurants.forEach(r => {
+                    let newRating = r.rating + adjustValue;
+                    if (newRating < 1) newRating = 1;
+                    if (newRating > 5) newRating = 5;
+                    r.rating = parseFloat(newRating.toFixed(1));
+                });
+                saveRestaurants();
+                applyFilters();
+                alert(`已為所有餐廳評分調整 ${adjustValue}。`);
+            });
+
+            checkDataIntegrityBtn.addEventListener('click', () => {
+                let issues = [];
+                restaurants.forEach((r, index) => {
+                    if (!r.name) issues.push(`第 ${index + 1} 筆資料 (名稱: ${r.name || '無'})：缺少餐廳名稱。`);
+                    if (!r.type) issues.push(`第 ${index + 1} 筆資料 (名稱: ${r.name || '無'})：缺少飲食種類。`);
+                    if (!r.rating) issues.push(`第 ${index + 1} 筆資料 (名稱: ${r.name || '無'})：缺少評分。`);
+                    if (!r.hours) issues.push(`第 ${index + 1} 筆資料 (名稱: ${r.name || '無'})：缺少營業時間。`);
+                    if (!r.tags || r.tags.length === 0) issues.push(`第 ${index + 1} 筆資料 (名稱: ${r.name || '無'})：缺少標籤。`);
+                    if (r.lat === undefined || r.lng === undefined || isNaN(r.lat) || isNaN(r.lng)) {
+                        issues.push(`第 ${index + 1} 筆資料 (名稱: ${r.name || '無'})：缺少有效的經緯度。`);
+                    }
+                });
+
+                if (issues.length > 0) {
+                    integrityResultDiv.innerHTML = `<h4 style="color: red;">發現以下資料問題：</h4><ul>${issues.map(issue => `<li>${issue}</li>`).join('')}</ul>`;
+                } else {
+                    integrityResultDiv.innerHTML = `<h4 style="color: green;">所有資料都非常完整！</h4>`;
+                }
             });
             
             mergeButton.addEventListener('click', () => {
@@ -1314,6 +1814,9 @@
                     if (restaurant.isFavorite === undefined) {
                         restaurant.isFavorite = false;
                     }
+                    if (restaurant.weight === undefined) {
+                        restaurant.weight = 1;
+                    }
                     combinedRestaurantsMap.set(restaurant.name, restaurant);
                 });
 
@@ -1321,6 +1824,9 @@
                     if (!combinedRestaurantsMap.has(restaurant.name)) {
                         if (restaurant.isFavorite === undefined) {
                             restaurant.isFavorite = false;
+                        }
+                        if (restaurant.weight === undefined) {
+                            restaurant.weight = 1;
                         }
                         combinedRestaurantsMap.set(restaurant.name, restaurant);
                     }
@@ -1336,6 +1842,94 @@
                 json2Input.value = '';
             });
 
+            copyJsonBtn.addEventListener('click', () => {
+                if (navigator.clipboard) {
+                    navigator.clipboard.writeText(jsonDataArea.value).then(() => {
+                        alert('已複製到剪貼簿！');
+                    }).catch(err => {
+                        console.error('複製失敗: ', err);
+                        alert('複製失敗，請手動選取文字。');
+                    });
+                } else {
+                    jsonDataArea.select();
+                    document.execCommand('copy');
+                    alert('已複製到剪貼簿！');
+                }
+            });
+
+            pasteJsonBtn.addEventListener('click', async () => {
+                if (navigator.clipboard) {
+                    try {
+                        const text = await navigator.clipboard.readText();
+                        jsonDataArea.value = text;
+                        alert('已從剪貼簿貼上！');
+                    } catch (err) {
+                        console.error('貼上失敗: ', err);
+                        alert('貼上失敗，請手動貼上。');
+                    }
+                } else {
+                    alert('您的瀏覽器不支援自動貼上功能，請手動貼上。');
+                }
+            });
+
+            copyMergeBtns.forEach(btn => {
+                btn.addEventListener('click', (e) => {
+                    const targetId = e.target.dataset.target;
+                    const textarea = document.getElementById(targetId);
+                    if (navigator.clipboard) {
+                        navigator.clipboard.writeText(textarea.value).then(() => {
+                            alert('已複製到剪貼簿！');
+                        }).catch(err => {
+                            console.error('複製失敗: ', err);
+                            alert('複製失敗，請手動選取文字。');
+                        });
+                    } else {
+                        textarea.select();
+                        document.execCommand('copy');
+                        alert('已複製到剪貼簿！');
+                    }
+                });
+            });
+
+            pasteMergeBtns.forEach(btn => {
+                btn.addEventListener('click', async (e) => {
+                    const targetId = e.target.dataset.target;
+                    const textarea = document.getElementById(targetId);
+                    if (navigator.clipboard) {
+                        try {
+                            const text = await navigator.clipboard.readText();
+                            textarea.value = text;
+                            alert('已從剪貼簿貼上！');
+                        } catch (err) {
+                            console.error('貼上失敗: ', err);
+                            alert('貼上失敗，請手動貼上。');
+                        }
+                    } else {
+                        alert('您的瀏覽器不支援自動貼上功能，請手動貼上。');
+                    }
+                });
+            });
+
+            function setupExpandablePanel(header, content) {
+                header.addEventListener('click', () => {
+                    const isExpanded = content.classList.contains('expanded');
+                    if (isExpanded) {
+                        content.classList.remove('expanded');
+                        header.classList.remove('expanded');
+                        header.classList.add('collapsed');
+                    } else {
+                        content.classList.add('expanded');
+                        header.classList.add('expanded');
+                        header.classList.remove('collapsed');
+                    }
+                });
+            }
+            
+            setupExpandablePanel(dataIoHeader, dataIoContent);
+            setupExpandablePanel(customLocationHeader, customLocationContent);
+
+            renderLocationRadios();
+            renderCustomLocationsList();
             applyFilters();
         });
     </script>
