@@ -609,6 +609,64 @@
             height: 250px;
             width: 100%;
         }
+
+        .rating-filter-group {
+            margin-top: 15px;
+        }
+        
+        .rating-filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        
+        .rating-filter-options label {
+            display: inline-flex;
+            align-items: center;
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            width: auto;
+        }
+        
+        .rating-filter-options label:hover {
+            background: #d6dbe0;
+        }
+        
+        .rating-filter-options input[type="radio"] {
+            margin-right: 8px;
+            width: auto;
+            accent-color: #337ab7;
+        }
+        
+        .custom-rating-filter {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 10px;
+            justify-content: center;
+        }
+        
+        .custom-rating-filter input {
+            width: 60px;
+            padding: 5px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+        }
+        
+        .custom-rating-filter button {
+            padding: 5px 10px;
+            background-color: #337ab7;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
         /* Responsive adjustments */
         @media (max-width: 600px) {
             .data-io .btn-group,
@@ -830,6 +888,22 @@
                     <input type="number" id="customDistance" min="0" placeholder="輸入距離">
                     <button id="applyCustomDistance">套用</button>
                 </div>
+
+                <h4>評分篩選:</h4>
+                <div class="rating-filter-options">
+                    <label><input type="radio" name="ratingFilter" value="all" checked> 全部評分</label>
+                    <label><input type="radio" name="ratingFilter" value="4+"> 4 星以上</label>
+                    <label><input type="radio" name="ratingFilter" value="4.5+"> 4.5 星以上</label>
+                    <label><input type="radio" name="ratingFilter" value="3-4"> 3-4 星</label>
+                    <label><input type="radio" name="ratingFilter" value="4-4.7"> 4-4.7 星</label>
+                    <label><input type="radio" name="ratingFilter" value="custom" id="customRatingRadio"> 自訂範圍</label>
+                </div>
+                <div class="custom-rating-filter">
+                    <input type="number" id="minRating" min="1" max="5" step="0.1" placeholder="最低分">
+                    <span>~</span>
+                    <input type="number" id="maxRating" min="1" max="5" step="0.1" placeholder="最高分">
+                    <button id="applyCustomRating">套用</button>
+                </div>
             </div>
             
             <button id="randomButton">隨機抽取餐廳</button>
@@ -970,6 +1044,13 @@
             const statsResults = document.getElementById('statsResults');
             const historyLog = document.getElementById('historyLog');
             const clearHistoryBtn = document.getElementById('clearHistoryBtn');
+
+            const ratingFilters = document.querySelectorAll('input[name="ratingFilter"]');
+            const customRatingRadio = document.getElementById('customRatingRadio');
+            const minRatingInput = document.getElementById('minRating');
+            const maxRatingInput = document.getElementById('maxRating');
+            const applyCustomRatingButton = document.getElementById('applyCustomRating');
+            let customRatingRange = { min: null, max: null };
 
             const DORM_LOCATION = { lat: 25.122973560805033, lng: 121.51200418632095, name: '陽明校區男三舍' };
             let myLocation = DORM_LOCATION;
@@ -1440,6 +1521,7 @@
                     favoritesOnly = false,
                     tags = [],
                     distance = null,
+                    rating = null,
                     sortBy = 'rating-desc'
                 } = filterCriteria;
 
@@ -1461,6 +1543,12 @@
                     filteredRestaurants = filteredRestaurants.filter(r => {
                         const dist = haversineDistance(myLocation.lat, myLocation.lng, r.lat, r.lng);
                         return dist <= distance;
+                    });
+                }
+
+                if (rating !== null) {
+                    filteredRestaurants = filteredRestaurants.filter(r => {
+                        return r.rating >= rating.min && r.rating <= rating.max;
                     });
                 }
                 
@@ -1518,6 +1606,37 @@
                 });
             }
 
+            ratingFilters.forEach(radio => radio.addEventListener('change', applyFilters));
+            
+            applyCustomRatingButton.addEventListener('click', () => {
+                const min = parseFloat(minRatingInput.value);
+                const max = parseFloat(maxRatingInput.value);
+                
+                if (isNaN(min)) {
+                    alert('請輸入有效的最低評分！');
+                    return;
+                }
+                
+                if (isNaN(max)) {
+                    alert('請輸入有效的最高評分！');
+                    return;
+                }
+                
+                if (min > max) {
+                    alert('最低評分不能高於最高評分！');
+                    return;
+                }
+                
+                if (min < 1 || min > 5 || max < 1 || max > 5) {
+                    alert('評分範圍必須在 1 到 5 之間！');
+                    return;
+                }
+                
+                customRatingRange = { min, max };
+                customRatingRadio.checked = true;
+                applyFilters();
+            });
+
             function saveRestaurants() {
                 localStorage.setItem('restaurants', JSON.stringify(restaurants));
             }
@@ -1529,16 +1648,43 @@
                     .filter(checkbox => checkbox.checked)
                     .map(checkbox => checkbox.value);
                 const selectedDistance = Array.from(document.querySelectorAll('input[name="distanceFilter"]')).find(radio => radio.checked)?.value;
-
+                const selectedRating = Array.from(document.querySelectorAll('input[name="ratingFilter"]')).find(radio => radio.checked)?.value;
+                
                 const distanceValue = selectedDistance === 'custom' ? customDistanceValue : selectedDistance;
-
                 const sortBy = sortCriteria.value;
+                
+                // 處理評分篩選
+                let ratingFilter = null;
+                if (selectedRating === 'custom' && customRatingRange.min !== null && customRatingRange.max !== null) {
+                    ratingFilter = {
+                        min: customRatingRange.min,
+                        max: customRatingRange.max
+                    };
+                } else {
+                    switch (selectedRating) {
+                        case '4+':
+                            ratingFilter = { min: 4, max: 5 };
+                            break;
+                        case '4.5+':
+                            ratingFilter = { min: 4.5, max: 5 };
+                            break;
+                        case '3-4':
+                            ratingFilter = { min: 3, max: 4 };
+                            break;
+                        case '4-4.7':
+                            ratingFilter = { min: 4, max: 4.7 };
+                            break;
+                        default:
+                            ratingFilter = null; // 全部評分
+                    }
+                }
                 
                 renderRestaurants({
                     openNow,
                     favoritesOnly,
                     tags: selectedTags,
                     distance: distanceValue,
+                    rating: ratingFilter,
                     sortBy
                 });
             }
