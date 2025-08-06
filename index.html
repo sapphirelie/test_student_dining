@@ -714,7 +714,40 @@
         #adminSection.visible ~ .section #restaurantList .bulk-select-checkbox {
             display: inline-block;
         }
+
+        .price-filter-group {
+        margin-top: 15px;
+        }
+    
+        .price-filter-options {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
         
+        .price-filter-options label {
+            display: inline-flex;
+            align-items: center;
+            background: #e9ecef;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            transition: background-color 0.3s, box-shadow 0.3s;
+            width: auto;
+        }
+        
+        .price-filter-options label:hover {
+            background: #d6dbe0;
+        }
+        
+        .price-filter-options input[type="radio"] {
+            margin-right: 8px;
+            width: auto;
+            accent-color: #337ab7;
+        }
+            
 
         /* Responsive adjustments */
         @media (max-width: 600px) {
@@ -970,6 +1003,16 @@
                     <input type="number" id="maxRating" min="1" max="5" step="0.1" placeholder="最高分">
                     <button id="applyCustomRating">套用</button>
                 </div>
+
+                <div class="price-filter-group">
+                    <h4>價位篩選:</h4>
+                    <div class="price-filter-options">
+                        <label><input type="radio" name="priceFilter" value="all" checked> 全部價位</label>
+                        <label><input type="radio" name="priceFilter" value="low"> 低價位 (100元以下)</label>
+                        <label><input type="radio" name="priceFilter" value="medium"> 中價位 (100-300元)</label>
+                        <label><input type="radio" name="priceFilter" value="high"> 高價位 (300元以上)</label>
+                    </div>
+                </div>
             </div>
             
             <button id="randomButton">隨機抽取餐廳</button>
@@ -1010,6 +1053,13 @@
                 
                 <label for="tags">標籤 (用逗號分隔, 例: 主食, 小吃):</label>
                 <input type="text" id="tags" required>
+
+                <label for="priceRange">價位範圍:</label>
+                <select id="priceRange" required>
+                    <option value="low">低價位（100元以下）</option>
+                    <option value="medium">中價位（100–300元）</option>
+                    <option value="high">高價位（300元以上）</option>
+                </select>
 
                 <input type="hidden" id="weight" value="1">
 
@@ -1159,297 +1209,240 @@
             };
 
 
-            let restaurants = JSON.parse(localStorage.getItem('restaurants')) || [
+            let restaurants = [
                 {
                     "name": "布查花園法式料理",
                     "type": "法式料理",
                     "rating": 4.2,
                     "hours": "每日 11:30–14:00, 17:30–21:00",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食"],
                     "location": "陽明校區",
                     "lat": 25.12180104401591,
                     "lng": 121.5143143070673,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "high" // 高價位 (300元以上)
                 },
                 {
                     "name": "吉豚屋 石牌店",
                     "type": "日式炸豬排",
                     "rating": 4.8,
                     "hours": "每日 11:00–21:00",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食"],
                     "location": "陽明校區",
                     "lat": 25.11609237465052,
                     "lng": 121.51539652208888,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "medium" // 中價位 (100-300元)
                 },
                 {
                     "name": "莎諾西餐",
                     "type": "歐式料理",
                     "rating": 4.5,
                     "hours": "每日 11:00–21:30",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食"],
                     "location": "陽明校區",
                     "lat": 25.119000398429364,
                     "lng": 121.52371796441778,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "high" // 高價位 (300元以上)
                 },
                 {
                     "name": "Creative Pasta 創義麵 石牌店",
                     "type": "義大利麵",
                     "rating": 4.4,
                     "hours": "每日 11:00–21:30",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食"],
                     "location": "陽明校區",
                     "lat": 25.117171958343363,
                     "lng": 121.51648565090608,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "medium" // 中價位 (100-300元)
                 },
                 {
                     "name": "朝九晚五早午餐",
                     "type": "早午餐",
                     "rating": 4.3,
                     "hours": "星期四公休，其他每日 08:00 – 15:00",
-                    "tags": [
-                        "早餐",
-                        "午餐",
-                        "主食"
-                    ],
+                    "tags": ["早餐", "午餐", "主食"],
                     "location": "陽明校區",
                     "lat": 25.119173311723237,
                     "lng": 121.51467893555883,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "medium" // 中價位 (100-300元)
                 },
                 {
                     "name": "陳季炸雞 石牌店",
                     "type": "炸雞",
                     "rating": 4.3,
                     "hours": "每日 11:00 – 00:00",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食",
-                        "小吃"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食", "小吃"],
                     "location": "陽明校區",
                     "lat": 25.11694545909602,
                     "lng": 121.51651246616777,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "low" // 低價位 (100元以下)
                 },
                 {
                     "name": "吳記排骨酥 石牌店",
                     "type": "排骨酥",
                     "rating": 4.5,
                     "hours": "每日 13:30 – 21:30",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食",
-                        "小吃"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食", "小吃"],
                     "location": "陽明校區",
                     "lat": 25.116988144319897,
                     "lng": 121.51673982024002,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "low" // 低價位 (100元以下)
                 },
                 {
                     "name": "阿財鍋貼餃子專賣店",
                     "type": "鍋貼、餃子",
                     "rating": 3.7,
                     "hours": "星期三公休，其他時間請參考地圖資訊或致電確認",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食",
-                        "小吃"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食", "小吃"],
                     "location": "陽明校區",
                     "lat": 25.11648705871863,
                     "lng": 121.51793064907864,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "low" // 低價位 (100元以下)
                 },
                 {
                     "name": "水龜伯古早味",
                     "type": "冰品、甜品",
                     "rating": 4.3,
                     "hours": "每日 11:30 – 23:00",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "甜品"
-                    ],
+                    "tags": ["午餐", "晚餐", "甜品"],
                     "location": "陽明校區",
                     "lat": 25.117119572816343,
                     "lng": 121.51581563558221,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "low" // 低價位 (100元以下)
                 },
                 {
                     "name": "阿亮小吃",
                     "type": "小吃",
                     "rating": 4.7,
                     "hours": "星期一至五 24 小時營業；星期六 00:00 – 08:00；星期日 10:00 – 00:00",
-                    "tags": [
-                        "早餐",
-                        "午餐",
-                        "晚餐",
-                        "主食",
-                        "小吃"
-                    ],
+                    "tags": ["早餐", "午餐", "晚餐", "主食", "小吃"],
                     "location": "陽明校區",
                     "lat": 25.11222199036574,
                     "lng": 121.51028153827572,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "low" // 低價位 (100元以下)
                 },
                 {
                     "name": "白家十全排骨（石牌店）",
                     "type": "藥膳排骨",
                     "rating": 4.9,
                     "hours": "每日 11:00 – 02:30",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食",
-                        "小吃"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食", "小吃"],
                     "location": "陽明校區",
                     "lat": 25.120240065071094,
                     "lng": 121.51665179977125,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "medium" // 中價位 (100-300元)
                 },
                 {
                     "name": "彈芽麵",
                     "type": "麵食",
                     "rating": 4.1,
                     "hours": "星期二公休，其他時間請參考地圖資訊或致電確認",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食",
-                        "小吃"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食", "小吃"],
                     "location": "陽明校區",
                     "lat": 25.11625300321784,
                     "lng": 121.51788160667961,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "low" // 低價位 (100元以下)
                 },
                 {
                     "name": "侯美國紅茶好吃雞（石牌店）",
                     "type": "茶飲、炸雞",
                     "rating": 3.5,
                     "hours": "每日 10:40 – 20:30",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "小吃"
-                    ],
+                    "tags": ["午餐", "晚餐", "小吃"],
                     "location": "陽明校區",
                     "lat": 25.116690159194476,
                     "lng": 121.51812433558221,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "low" // 低價位 (100元以下)
                 },
                 {
                     "name": "壽司郎（石牌店）",
                     "type": "壽司",
                     "rating": 3.6,
                     "hours": "11:00–22:00",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食"],
                     "location": "陽明校區",
                     "lat": 25.118324,
                     "lng": 121.518128,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "medium" // 中價位 (100-300元)
                 },
                 {
                     "name": "大三元便當快餐",
                     "type": "便當",
                     "rating": 3.9,
                     "hours": "10:30–14:30 16:30–20:30（星期一休）",
-                    "tags": [
-                        "主食"
-                    ],
+                    "tags": ["主食"],
                     "location": "陽明校區",
                     "lat": 25.116819,
                     "lng": 121.516877,
                     "isFavorite": false,
-                    "weight": 1
-                },
-                {
-                    "name": "2派克脆皮雞排 石牌店",
-                    "type": "炸物",
-                    "rating": 3.4,
-                    "hours": "11:30–23:30",
-                    "tags": [
-                        "小吃"
-                    ],
-                    "location": "陽明校區",
-                    "lat": 25.116749,
-                    "lng": 121.517211,
-                    "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "low" // 低價位 (100元以下)
                 },
                 {
                     "name": "大嘴巴牛排",
                     "type": "牛排",
                     "rating": 4.1,
                     "hours": "平日：11:30–14:00 16:30–23:00 假日：11:30–23:00",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食"],
                     "location": "陽明校區",
                     "lat": 25.116572,
                     "lng": 121.516628,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "medium" // 中價位 (100-300元)
                 },
                 {
                     "name": "德州美墨炸雞 天母店",
                     "type": "炸雞",
                     "rating": 4.3,
                     "hours": "11:00–21:30（星期一休）",
-                    "tags": [
-                        "午餐",
-                        "晚餐",
-                        "主食"
-                    ],
+                    "tags": ["午餐", "晚餐", "主食"],
                     "location": "陽明校區",
                     "lat": 25.115703,
                     "lng": 121.52828,
                     "isFavorite": false,
-                    "weight": 1
+                    "weight": 1,
+                    "priceRange": "medium" // 中價位 (100-300元)
+                },
+                {
+                    "name": "2派克脆皮雞排 石牌店",
+                    "type": "炸物",
+                    "rating": 3.4,
+                    "hours": "11:30–23:30",
+                    "tags": ["小吃", "炸物"],
+                    "location": "陽明校區",
+                    "lat": 25.116749,
+                    "lng": 121.517211,
+                    "isFavorite": false,
+                    "weight": 1,
+                    "priceRange": "low" // 低價位 (100元以下)
                 }
             ];
 
@@ -1675,6 +1668,7 @@
             function renderRestaurants(filterCriteria = {}) {
                 restaurantList.innerHTML = '';
                 const {
+                    price = 'all',
                     openNow = false,
                     favoritesOnly = false,
                     tags = [],
@@ -1704,11 +1698,17 @@
                     });
                 }
 
+                if (price !== 'all') {
+                    filteredRestaurants = filteredRestaurants.filter(r => r.priceRange === price);
+                }
+
                 if (rating !== null) {
                     filteredRestaurants = filteredRestaurants.filter(r => {
                         return r.rating >= rating.min && r.rating <= rating.max;
                     });
                 }
+
+                
                 
                 filteredRestaurants.forEach(r => {
                     r.distance = haversineDistance(myLocation.lat, myLocation.lng, r.lat, r.lng);
@@ -1751,6 +1751,7 @@
                             <strong>${r.name}</strong> - ${r.type}<br>
                             評分: ${r.rating} | 營業時間: ${r.hours}<br>
                             距離${myLocation.name}: ${r.distance.toFixed(0)} 公尺<br>
+                            價位: ${r.priceRange === 'low' ? '低價位' : r.priceRange === 'medium' ? '中價位' : '高價位'}<br>
                             標籤: ${r.tags.join(', ')}
                         </div>
                         <div class="action-buttons">
@@ -1800,6 +1801,7 @@
                 localStorage.setItem('restaurants', JSON.stringify(restaurants));
             }
 
+            // 修改applyFilters函數以包含價位篩選
             function applyFilters() {
                 const openNow = openNowFilter.checked;
                 const favoritesOnly = favoritesFilter.checked;
@@ -1808,6 +1810,7 @@
 
                 const selectedDistance = Array.from(document.querySelectorAll('input[name="distanceFilter"]')).find(radio => radio.checked)?.value;
                 const selectedRating = Array.from(document.querySelectorAll('input[name="ratingFilter"]')).find(radio => radio.checked)?.value;
+                const selectedPrice = Array.from(document.querySelectorAll('input[name="priceFilter"]')).find(radio => radio.checked)?.value || 'all';
                 
                 const distanceValue = selectedDistance === 'custom' ? customDistanceValue : selectedDistance;
                 const sortBy = sortCriteria.value;
@@ -1844,6 +1847,7 @@
                     tags: selectedTags,
                     distance: distanceValue,
                     rating: ratingFilter,
+                    price: selectedPrice,
                     sortBy
                 });
             }
@@ -2061,16 +2065,17 @@
                 const tags = document.getElementById('tags').value.split(',').map(tag => tag.trim()).filter(tag => tag !== '');
                 const weight = 1; 
                 const [lat, lng] = document.getElementById('coords').value.split(',').map(Number);
-                
+                const isFavorite = false
+                const priceRange = document.getElementById('priceRange').value  // 新增價位篩選
                 if (editingIndex !== null) {
                     const oldData = {...restaurants[editingIndex]};
-                    restaurants[editingIndex] = { ...restaurants[editingIndex], name, type, rating, hours, tags, weight: restaurants[editingIndex].weight, lat, lng };
+                    restaurants[editingIndex] = { ...restaurants[editingIndex], name, type, rating, hours, tags, weight: restaurants[editingIndex].weight, lat, lng,priceRange };
                     logRestaurantChange('edit', restaurants[editingIndex], oldData);
                     editingIndex = null;
                     submitBtn.textContent = '新增';
                     addRestaurantTitle.textContent = '新增餐廳';
                 } else {
-                    const newRestaurant = { name, type, rating, hours, tags, weight, lat, lng, isFavorite: false };
+                    const newRestaurant = { name, type, rating, hours, tags, weight, lat, lng, isFavorite: false, priceRange };
                     restaurants.push(newRestaurant);
                     logRestaurantChange('add', newRestaurant);
                 }
@@ -2102,6 +2107,7 @@
                     document.getElementById('hours').value = r.hours;
                     document.getElementById('tags').value = r.tags.join(', ');
                     document.getElementById('coords').value = `${r.lat}, ${r.lng}`;
+                    document.getElementById('priceRange').value = r.priceRange || 'medium';
                     
                     editingIndex = restaurantIndex;
                     submitBtn.textContent = '更新';
@@ -2596,7 +2602,10 @@
                 content.classList.toggle('expanded', expanded);
             });
 
-            
+            document.querySelectorAll('input[name="priceFilter"]').forEach(radio => {
+                radio.addEventListener('change', applyFilters);
+            });
+
             setupExpandablePanel(dataIoHeader, dataIoContent);
             setupExpandablePanel(customLocationHeader, customLocationContent);
 
